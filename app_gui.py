@@ -414,10 +414,14 @@ class FoliadorApp(tk.Tk):
 
         try:
             doble_cara = self.var_doble_cara.get()
-            for ruta in self.ultimos_archivos_generados:
-                self.engine.imprimir_documento(ruta, doble_cara=doble_cara)
-                self._log(f"🖨️ Impreso (dúplex: {'Sí' if doble_cara else 'No'}): {os.path.basename(ruta)}")
-            messagebox.showinfo("Impresión Enviada", f"Se enviaron {len(self.ultimos_archivos_generados)} hojas a la impresora.")
+            total = len(self.ultimos_archivos_generados)
+            self._log(f"Iniciando impresión de {total} documento(s) (Dúplex: {'Sí' if doble_cara else 'No'})...")
+            self.engine.imprimir_lote(
+                self.ultimos_archivos_generados,
+                doble_cara=doble_cara,
+                callback_progreso=lambda i, tot, nom: self._log(f"🖨️ [{i}/{tot}] Impreso: {nom}")
+            )
+            messagebox.showinfo("Impresión Enviada", f"Se enviaron {total} hojas a la impresora.")
         except Exception as e:
             messagebox.showerror("Error de Impresión", f"No se pudo completar la impresión:\n{e}")
 

@@ -1,7 +1,7 @@
 {
   "PAC_PCC1": {
-    "ultimo_folio": 410,
-    "fecha_actualizacion": "2026-10-03T14:17:30.779618",
+    "ultimo_folio": 97,
+    "fecha_actualizacion": "2026-10-03T15:33:57.008488",
     "historial": [
       {
         "fecha": "2026-10-03T13:16:31.811839",
@@ -70,6 +70,22 @@
         "folio_final": 410,
         "cantidad": 0,
         "accion": "Reinicio post validación"
+      },
+      {
+        "fecha": "2026-10-03T15:33:36.482720",
+        "folio_inicial": 93,
+        "folio_final": 93,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-03T15:33:57.008509",
+        "folio_inicial": 94,
+        "folio_final": 97,
+        "cantidad": 4,
+        "accion": "Emisión de 4 planilla(s) [00094 al 00097]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-03_PAC_PCC1",
+        "impreso": true
       }
     ]
   },

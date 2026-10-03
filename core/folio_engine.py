@@ -13,6 +13,7 @@ import datetime
 import zipfile
 import subprocess
 import sys
+import time
 
 try:
     import win32api
@@ -161,37 +162,76 @@ class FolioEngine:
         except Exception:
             return False
 
-    def imprimir_documento(self, ruta_archivo, doble_cara=True):
+    def imprimir_lote(self, lista_rutas, doble_cara=True, callback_progreso=None):
         """
-        Envía el documento Word directamente a la impresora.
-        Si doble_cara es True, fuerza la impresión por ambos lados (dúplex).
+        Imprime una lista de documentos Word en lote asegurando que CADA uno
+        conserve la configuración dúplex (ambos lados) sin interrupciones ni cierres prematuros.
         """
-        ruta_abs = os.path.abspath(ruta_archivo)
-        if not os.path.exists(ruta_abs):
-            raise FileNotFoundError(f"Archivo no encontrado para imprimir: {ruta_abs}")
+        if not lista_rutas:
+            return True
+
+        for r in lista_rutas:
+            if not os.path.exists(r):
+                raise FileNotFoundError(f"Archivo no encontrado para imprimir: {r}")
 
         if WIN32_AVAILABLE:
             if doble_cara:
                 self.set_impresora_duplex(True)
 
+            word = None
             try:
-                word = win32com.client.Dispatch("Word.Application")
+                # Usar DispatchEx para instanciar un proceso limpio e independiente de Word
+                word = win32com.client.DispatchEx("Word.Application")
                 word.Visible = False
-                doc = word.Documents.Open(ruta_abs)
-                doc.PrintOut()
-                doc.Close(False)
-                word.Quit()
+                word.DisplayAlerts = 0  # wdAlertsNone
+                word.Options.PrintBackground = False  # Spooling síncrono para que no se corten los documentos
+
+                total = len(lista_rutas)
+                for i, ruta in enumerate(lista_rutas):
+                    ruta_abs = os.path.abspath(ruta)
+                    doc = word.Documents.Open(ruta_abs, ReadOnly=True)
+                    try:
+                        # Background=False fuerza a Word a esperar que el trabajo se envíe completo al spooler
+                        doc.PrintOut(Background=False)
+                    finally:
+                        doc.Close(False)
+
+                    if callback_progreso:
+                        try:
+                            callback_progreso(i + 1, total, os.path.basename(ruta))
+                        except Exception:
+                            pass
+
+                    # Pausa prudente para que el spooler de Windows y la impresora procesen sin colisión
+                    time.sleep(0.5)
+
                 return True
-            except Exception:
-                try:
+            except Exception as e:
+                # Si falla COM, intentar vía ShellExecute archivo por archivo con pausa
+                for i, ruta in enumerate(lista_rutas):
+                    ruta_abs = os.path.abspath(ruta)
                     win32api.ShellExecute(0, "print", ruta_abs, None, ".", 0)
-                    return True
-                except Exception as e:
-                    raise RuntimeError(f"Error al enviar a la impresora: {e}")
+                    time.sleep(1.5)
+                return True
+            finally:
+                if word is not None:
+                    try:
+                        word.Quit()
+                    except Exception:
+                        pass
         else:
-            cmd = f'Start-Process -FilePath "{ruta_abs}" -Verb Print'
-            subprocess.run(["powershell", "-Command", cmd], check=True)
+            for ruta in lista_rutas:
+                ruta_abs = os.path.abspath(ruta)
+                cmd = f'Start-Process -FilePath "{ruta_abs}" -Verb Print'
+                subprocess.run(["powershell", "-Command", cmd], check=True)
+                time.sleep(1.0)
             return True
+
+    def imprimir_documento(self, ruta_archivo, doble_cara=True):
+        """
+        Envía un documento Word directamente a la impresora.
+        """
+        return self.imprimir_lote([ruta_archivo], doble_cara=doble_cara)
 
     def _inyectar_folio_quirurgico(self, xml_str, codigo, folio_str):
         """
@@ -335,11 +375,11 @@ class FolioEngine:
                 "folio": folio_str,
                 "numero": num,
                 "archivo": ruta_salida,
-                "nombre": nombre_salida
             })
 
-            if imprimir_al_generar:
-                self.imprimir_documento(ruta_salida, doble_cara=doble_cara)
+        if imprimir_al_generar:
+            rutas_a_imprimir = [a["archivo"] for a in archivos_generados]
+            self.imprimir_lote(rutas_a_imprimir, doble_cara=doble_cara)
 
         self.estado[codigo]["ultimo_folio"] = folio_final
         self.estado[codigo]["fecha_actualizacion"] = datetime.datetime.now().isoformat()
