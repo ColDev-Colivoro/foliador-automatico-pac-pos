@@ -1,0 +1,110 @@
+[
+  {
+    "codigo": "PAC_PCC1",
+    "categoria": "PAC",
+    "nombre": "PCC 1 · Recepción de Materias Primas Cefalópodos",
+    "archivo_plantilla": "PAC_PCC1_Recepcion_Cefalopodos_V15.docx",
+    "digitos": 5,
+    "prefijo": "Folio ",
+    "ultimo_folio_defecto": 379
+  },
+  {
+    "codigo": "PAC_PC2",
+    "categoria": "PAC",
+    "nombre": "PC 2 · Almacenamiento Cefalópodos (Enfriado / Congelado)",
+    "archivo_plantilla": "PAC_PC2_Alm_Cefalopodos_V15.docx",
+    "digitos": 5,
+    "prefijo": "FOLIO: ",
+    "ultimo_folio_defecto": 0
+  },
+  {
+    "codigo": "PAC_PC3",
+    "categoria": "PAC",
+    "nombre": "PC 3 · Almacenamiento en Proceso",
+    "archivo_plantilla": "PAC_PC3_Almacenamiento_Proceso_V15.docx",
+    "digitos": 5,
+    "prefijo": "FOLIO: ",
+    "ultimo_folio_defecto": 0
+  },
+  {
+    "codigo": "PAC_PC4",
+    "categoria": "PAC",
+    "nombre": "PC 4 · Control Temperatura en Línea",
+    "archivo_plantilla": "PAC_PC4_Control_Temperatura_Linea_V15.docx",
+    "digitos": 5,
+    "prefijo": "FOLIO ",
+    "ultimo_folio_defecto": 38
+  },
+  {
+    "codigo": "PAC_PC5",
+    "categoria": "PAC",
+    "nombre": "PC 5 · Congelación y Enfriado",
+    "archivo_plantilla": "PAC_PC5_Congelacion_Enfriado_V15.docx",
+    "digitos": 5,
+    "prefijo": "FOLIO: ",
+    "ultimo_folio_defecto": 0
+  },
+  {
+    "codigo": "PAC_PC6",
+    "categoria": "PAC",
+    "nombre": "PC 6 · Empaque y Reempaque Cefalópodos",
+    "archivo_plantilla": "PAC_PC6_Empaque_Reempaque_V15.docx",
+    "digitos": 5,
+    "prefijo": "FOLIO: ",
+    "ultimo_folio_defecto": 0
+  },
+  {
+    "codigo": "PAC_PC7",
+    "categoria": "PAC",
+    "nombre": "PC 7 · Despacho Cefalópodos Enfriados",
+    "archivo_plantilla": "PAC_PC7_Despacho_Cefalopodos_V15.docx",
+    "digitos": 5,
+    "prefijo": "Folio ",
+    "ultimo_folio_defecto": 130
+  },
+  {
+    "codigo": "PAC_DIAS",
+    "categoria": "PAC",
+    "nombre": "Días Productivos V15",
+    "archivo_plantilla": "PAC_Dias_Productivos_V15.docx",
+    "digitos": 4,
+    "prefijo": "Folio ",
+    "ultimo_folio_defecto": 37
+  },
+  {
+    "codigo": "POS_R1",
+    "categoria": "POS",
+    "nombre": "POS 1 · Higiene e Instalaciones de Planta",
+    "archivo_plantilla": "POS_R1_Higiene_Planta_V12.docx",
+    "digitos": 5,
+    "prefijo": "N° FOLIO: ",
+    "ultimo_folio_defecto": 0
+  },
+  {
+    "codigo": "POS_R2",
+    "categoria": "POS",
+    "nombre": "POS 2 · Higiene Personal y Control Sanitizantes",
+    "archivo_plantilla": "POS_R2_Higiene_Personal_Sanitizantes_V12.docx",
+    "digitos": 5,
+    "prefijo": "FOLIO: ",
+    "ultimo_folio_defecto": 340
+  },
+  {
+    "codigo": "POS_R3",
+    "categoria": "POS",
+    "nombre": "POS 3 · Estado e Higiene Exterior de Planta",
+    "archivo_plantilla": "POS_R3_Higiene_Exterior_Planta_V12.docx",
+    "digitos": 5,
+    "prefijo": "N° FOLIO: ",
+    "ultimo_folio_defecto": 0
+  },
+  {
+    "codigo": "POS_R4",
+    "categoria": "POS",
+    "nombre": "POS 4 · Control de Plagas",
+    "archivo_plantilla": "POS_R4_Control_Plagas_V12.docx",
+    "digitos": 5,
+    "prefijo": "N° FOLIO: ",
+    "ultimo_folio_defecto": 0
+  }
+]

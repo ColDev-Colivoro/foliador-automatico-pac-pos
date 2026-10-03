@@ -1,0 +1,271 @@
+{
+  "PAC_PCC1": {
+    "ultimo_folio": 410,
+    "fecha_actualizacion": "2026-10-03T14:17:30.779618",
+    "historial": [
+      {
+        "fecha": "2026-10-03T13:16:31.811839",
+        "folio_inicial": 379,
+        "folio_final": 379,
+        "cantidad": 0,
+        "accion": "Inicialización base"
+      },
+      {
+        "fecha": "2026-10-03T13:16:31.947973",
+        "folio_inicial": 380,
+        "folio_final": 381,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00380 al 00381]",
+        "carpeta": "c:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\test_batch"
+      },
+      {
+        "fecha": "2026-10-03T13:17:41.452978",
+        "folio_inicial": 379,
+        "folio_final": 379,
+        "cantidad": 0,
+        "accion": "Reinicio a estado inicial"
+      },
+      {
+        "fecha": "2026-10-03T13:24:32.625490",
+        "folio_inicial": 393,
+        "folio_final": 393,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-03T13:24:54.021235",
+        "folio_inicial": 394,
+        "folio_final": 399,
+        "cantidad": 6,
+        "accion": "Emisión de 6 planilla(s) [00394 al 00399]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-03_PAC_PCC1"
+      },
+      {
+        "fecha": "2026-10-03T13:32:45.061012",
+        "folio_inicial": 388,
+        "folio_final": 388,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-03T13:33:00.281914",
+        "folio_inicial": 389,
+        "folio_final": 410,
+        "cantidad": 22,
+        "accion": "Emisión de 22 planilla(s) [00389 al 00410]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-03_PAC_PCC1"
+      },
+      {
+        "fecha": "2026-10-03T14:16:35.045607",
+        "folio_inicial": 411,
+        "folio_final": 411,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00411 al 00411]",
+        "carpeta": "c:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\TEST_VALIDATION",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-03T14:17:30.779657",
+        "folio_inicial": 410,
+        "folio_final": 410,
+        "cantidad": 0,
+        "accion": "Reinicio post validación"
+      }
+    ]
+  },
+  "PAC_PC3": {
+    "ultimo_folio": 0,
+    "fecha_actualizacion": "2026-10-03T14:45:58.525672",
+    "historial": [
+      {
+        "fecha": "2026-10-03T13:16:31.811851",
+        "folio_inicial": 0,
+        "folio_final": 0,
+        "cantidad": 0,
+        "accion": "Inicialización base"
+      },
+      {
+        "fecha": "2026-10-03T14:20:08.929573",
+        "folio_inicial": 1,
+        "folio_final": 6,
+        "cantidad": 6,
+        "accion": "Emisión de 6 planilla(s) [00001 al 00006]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-03_PAC_PC3",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-03T14:20:51.901227",
+        "folio_inicial": 7,
+        "folio_final": 12,
+        "cantidad": 6,
+        "accion": "Emisión de 6 planilla(s) [00007 al 00012]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-03_PAC_PC3",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-03T14:21:12.398891",
+        "folio_inicial": 13,
+        "folio_final": 18,
+        "cantidad": 6,
+        "accion": "Emisión de 6 planilla(s) [00013 al 00018]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-03_PAC_PC3",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-03T14:28:52.054538",
+        "folio_inicial": 19,
+        "folio_final": 24,
+        "cantidad": 6,
+        "accion": "Emisión de 6 planilla(s) [00019 al 00024]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-03_PAC_PC3",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-03T14:45:45.889356",
+        "folio_inicial": 25,
+        "folio_final": 25,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00025 al 00025]",
+        "carpeta": "c:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\TEST_PC3_VERIFY",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-03T14:45:58.525692",
+        "folio_inicial": 0,
+        "folio_final": 0,
+        "cantidad": 0,
+        "accion": "Reinicio post verificacion"
+      }
+    ]
+  },
+  "PAC_PC4": {
+    "ultimo_folio": 38,
+    "fecha_actualizacion": "2026-10-03T13:16:31.811856",
+    "historial": [
+      {
+        "fecha": "2026-10-03T13:16:31.811858",
+        "folio_inicial": 38,
+        "folio_final": 38,
+        "cantidad": 0,
+        "accion": "Inicialización base"
+      }
+    ]
+  },
+  "PAC_PC5": {
+    "ultimo_folio": 0,
+    "fecha_actualizacion": "2026-10-03T13:16:31.811861",
+    "historial": [
+      {
+        "fecha": "2026-10-03T13:16:31.811863",
+        "folio_inicial": 0,
+        "folio_final": 0,
+        "cantidad": 0,
+        "accion": "Inicialización base"
+      }
+    ]
+  },
+  "PAC_PC6": {
+    "ultimo_folio": 0,
+    "fecha_actualizacion": "2026-10-03T13:16:31.811867",
+    "historial": [
+      {
+        "fecha": "2026-10-03T13:16:31.811869",
+        "folio_inicial": 0,
+        "folio_final": 0,
+        "cantidad": 0,
+        "accion": "Inicialización base"
+      }
+    ]
+  },
+  "PAC_PC7": {
+    "ultimo_folio": 130,
+    "fecha_actualizacion": "2026-10-03T13:16:31.811871",
+    "historial": [
+      {
+        "fecha": "2026-10-03T13:16:31.811873",
+        "folio_inicial": 130,
+        "folio_final": 130,
+        "cantidad": 0,
+        "accion": "Inicialización base"
+      }
+    ]
+  },
+  "PAC_DIAS": {
+    "ultimo_folio": 37,
+    "fecha_actualizacion": "2026-10-03T13:16:31.811877",
+    "historial": [
+      {
+        "fecha": "2026-10-03T13:16:31.811879",
+        "folio_inicial": 37,
+        "folio_final": 37,
+        "cantidad": 0,
+        "accion": "Inicialización base"
+      }
+    ]
+  },
+  "POS_R1": {
+    "ultimo_folio": 0,
+    "fecha_actualizacion": "2026-10-03T13:16:31.811882",
+    "historial": [
+      {
+        "fecha": "2026-10-03T13:16:31.811884",
+        "folio_inicial": 0,
+        "folio_final": 0,
+        "cantidad": 0,
+        "accion": "Inicialización base"
+      }
+    ]
+  },
+  "POS_R2": {
+    "ultimo_folio": 340,
+    "fecha_actualizacion": "2026-10-03T13:16:31.811891",
+    "historial": [
+      {
+        "fecha": "2026-10-03T13:16:31.811893",
+        "folio_inicial": 340,
+        "folio_final": 340,
+        "cantidad": 0,
+        "accion": "Inicialización base"
+      }
+    ]
+  },
+  "POS_R3": {
+    "ultimo_folio": 0,
+    "fecha_actualizacion": "2026-10-03T13:16:31.811899",
+    "historial": [
+      {
+        "fecha": "2026-10-03T13:16:31.811901",
+        "folio_inicial": 0,
+        "folio_final": 0,
+        "cantidad": 0,
+        "accion": "Inicialización base"
+      }
+    ]
+  },
+  "POS_R4": {
+    "ultimo_folio": 0,
+    "fecha_actualizacion": "2026-10-03T13:16:31.811904",
+    "historial": [
+      {
+        "fecha": "2026-10-03T13:16:31.811906",
+        "folio_inicial": 0,
+        "folio_final": 0,
+        "cantidad": 0,
+        "accion": "Inicialización base"
+      }
+    ]
+  },
+  "PAC_PC2": {
+    "ultimo_folio": 0,
+    "fecha_actualizacion": "2026-10-03T14:45:45.881698",
+    "historial": [
+      {
+        "fecha": "2026-10-03T14:45:45.881724",
+        "folio_inicial": 0,
+        "folio_final": 0,
+        "cantidad": 0,
+        "accion": "Inicialización base"
+      }
+    ]
+  }
+}

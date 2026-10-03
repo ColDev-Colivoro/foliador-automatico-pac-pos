@@ -1,0 +1,12 @@
+# Compilación y ejecutables
+build/
+dist/
+*.spec
+__pycache__/
+*.pyc
+
+# Archivos temporales de Word
+~$*.docx
+
+# Salida de documentos emitidos
+salida/
