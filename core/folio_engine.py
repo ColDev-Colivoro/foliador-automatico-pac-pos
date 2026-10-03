@@ -17,6 +17,7 @@ import sys
 try:
     import win32api
     import win32print
+    import win32con
     import win32com.client
     WIN32_AVAILABLE = True
 except ImportError:
@@ -138,15 +139,41 @@ class FolioEngine:
                 pass
         return "Impresora predeterminada de Windows"
 
-    def imprimir_documento(self, ruta_archivo):
+    def set_impresora_duplex(self, activar=True):
         """
-        Envía el documento Word directamente a la impresora sin mostrar ventanas.
+        Configura el modo dúplex (ambos lados) en la impresora predeterminada.
+        DMDUP_VERTICAL (2) = voltear en borde largo (vertical estándar).
+        """
+        if not WIN32_AVAILABLE:
+            return False
+        try:
+            pname = win32print.GetDefaultPrinter()
+            hprinter = win32print.OpenPrinter(pname, {"DesiredAccess": win32print.PRINTER_ALL_ACCESS})
+            try:
+                info = win32print.GetPrinter(hprinter, 2)
+                devmode = info["pDevMode"]
+                devmode.Duplex = win32con.DMDUP_VERTICAL if activar else win32con.DMDUP_SIMPLEX
+                devmode.Fields |= win32con.DM_DUPLEX
+                win32print.SetPrinter(hprinter, 2, info, 0)
+                return True
+            finally:
+                win32print.ClosePrinter(hprinter)
+        except Exception:
+            return False
+
+    def imprimir_documento(self, ruta_archivo, doble_cara=True):
+        """
+        Envía el documento Word directamente a la impresora.
+        Si doble_cara es True, fuerza la impresión por ambos lados (dúplex).
         """
         ruta_abs = os.path.abspath(ruta_archivo)
         if not os.path.exists(ruta_abs):
             raise FileNotFoundError(f"Archivo no encontrado para imprimir: {ruta_abs}")
 
         if WIN32_AVAILABLE:
+            if doble_cara:
+                self.set_impresora_duplex(True)
+
             try:
                 word = win32com.client.Dispatch("Word.Application")
                 word.Visible = False
@@ -261,7 +288,7 @@ class FolioEngine:
         p_general = re.compile(r'<w:p(?:\s+[^>]*)?>.*?</w:p>', re.DOTALL)
         return p_general.sub(repl_p, xml_str)
 
-    def generar_planillas(self, codigo, cantidad=1, carpeta_sublote=None, imprimir_al_generar=False):
+    def generar_planillas(self, codigo, cantidad=1, carpeta_sublote=None, imprimir_al_generar=False, doble_cara=True):
         info = self.get_plantilla_info(codigo)
         if not info:
             raise ValueError(f"Plantilla no reconocida: {codigo}")
@@ -312,7 +339,7 @@ class FolioEngine:
             })
 
             if imprimir_al_generar:
-                self.imprimir_documento(ruta_salida)
+                self.imprimir_documento(ruta_salida, doble_cara=doble_cara)
 
         self.estado[codigo]["ultimo_folio"] = folio_final
         self.estado[codigo]["fecha_actualizacion"] = datetime.datetime.now().isoformat()

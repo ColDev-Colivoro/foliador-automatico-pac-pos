@@ -37,6 +37,7 @@ class FoliadorApp(tk.Tk):
         self.var_proximo_folio = tk.StringVar()
         self.var_resumen_rango = tk.StringVar()
         self.var_auto_imprimir = tk.BooleanVar(value=False)
+        self.var_doble_cara = tk.BooleanVar(value=True)
         self.ultimos_archivos_generados = []
 
         # Mapa de opciones para el selector
@@ -215,9 +216,16 @@ class FoliadorApp(tk.Tk):
             style="Muted.TLabel"
         ).pack(anchor="w", pady=(0, 6))
 
+        chk_duplex = ttk.Checkbutton(
+            card_print,
+            text="📄 Imprimir por ambos lados (Dúplex: Planilla adelante + Instructivo atrás en 1 sola hoja)",
+            variable=self.var_doble_cara
+        )
+        chk_duplex.pack(anchor="w", pady=(0, 4))
+
         chk_print = ttk.Checkbutton(
             card_print,
-            text="Mandar a imprimir automáticamente a la impresora al hacer clic en Generar",
+            text="⚡ Mandar a imprimir automáticamente a la impresora al hacer clic en Generar",
             variable=self.var_auto_imprimir
         )
         chk_print.pack(anchor="w")
@@ -356,9 +364,15 @@ class FoliadorApp(tk.Tk):
 
         info = self.engine.get_plantilla_info(codigo)
         auto_print = self.var_auto_imprimir.get()
+        doble_cara = self.var_doble_cara.get()
 
         try:
-            res = self.engine.generar_planillas(codigo, cant, imprimir_al_generar=auto_print)
+            res = self.engine.generar_planillas(
+                codigo,
+                cant,
+                imprimir_al_generar=auto_print,
+                doble_cara=doble_cara
+            )
             self.ultimos_archivos_generados = [a["archivo"] for a in res["archivos"]]
             self._al_cambiar_plantilla()
 
@@ -399,9 +413,10 @@ class FoliadorApp(tk.Tk):
             return
 
         try:
+            doble_cara = self.var_doble_cara.get()
             for ruta in self.ultimos_archivos_generados:
-                self.engine.imprimir_documento(ruta)
-                self._log(f"🖨️ Impreso: {os.path.basename(ruta)}")
+                self.engine.imprimir_documento(ruta, doble_cara=doble_cara)
+                self._log(f"🖨️ Impreso (dúplex: {'Sí' if doble_cara else 'No'}): {os.path.basename(ruta)}")
             messagebox.showinfo("Impresión Enviada", f"Se enviaron {len(self.ultimos_archivos_generados)} hojas a la impresora.")
         except Exception as e:
             messagebox.showerror("Error de Impresión", f"No se pudo completar la impresión:\n{e}")
