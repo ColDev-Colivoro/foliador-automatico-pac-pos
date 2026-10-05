@@ -35,6 +35,7 @@ class FoliadorApp(tk.Tk):
         self.var_cantidad = tk.IntVar(value=1)
         self.var_ultimo_folio = tk.StringVar()
         self.var_resumen_rango = tk.StringVar()
+        self.var_impresora_seleccionada = tk.StringVar()
         self.var_auto_imprimir = tk.BooleanVar(value=False)
         self.var_doble_cara = tk.BooleanVar(value=True)
         self.ultimos_archivos_generados = []
@@ -97,6 +98,14 @@ class FoliadorApp(tk.Tk):
 
         style.configure("TSpinbox", fieldbackground="#ffffff", background="#0284c7", foreground="#0f172a", font=("Segoe UI", 11, "bold"))
         style.configure("TCheckbutton", background="#1e293b", foreground="#f8fafc", font=("Segoe UI", 10))
+
+        # Personalizar selector desplegable (Combobox)
+        style.configure("TCombobox", fieldbackground="#1e293b", background="#334155", foreground="#ffffff", selectbackground="#0284c7", selectforeground="#ffffff", font=("Segoe UI", 10))
+        style.map("TCombobox",
+                  fieldbackground=[("readonly", "#1e293b")],
+                  foreground=[("readonly", "#ffffff")],
+                  selectbackground=[("readonly", "#0284c7")],
+                  selectforeground=[("readonly", "#ffffff")])
 
         # Personalizar menú desplegable de la lista
         self.option_add("*TCombobox*Listbox.background", "#1e293b")
@@ -222,11 +231,43 @@ class FoliadorApp(tk.Tk):
         card_print = ttk.Frame(main_frame, style="Card.TFrame", padding=14)
         card_print.pack(fill="x", pady=(0, 12))
 
-        ttk.Label(card_print, text="3. SALIDA E IMPRESIÓN DIRECTA", font=("Segoe UI", 11, "bold"), style="Card.TLabel").pack(anchor="w", pady=(0, 4))
+        ttk.Label(card_print, text="3. SALIDA E IMPRESIÓN DIRECTA", font=("Segoe UI", 11, "bold"), style="Card.TLabel").pack(anchor="w", pady=(0, 6))
+
+        # Fila de selección de impresora del sistema
+        f_printer_row = ttk.Frame(card_print, style="Card.TFrame")
+        f_printer_row.pack(fill="x", pady=(0, 6))
+
+        ttk.Label(f_printer_row, text="🖨️ Impresora destino:", font=("Segoe UI", 10, "bold"), style="Card.TLabel").pack(side="left", padx=(0, 8))
+
+        self.combo_impresoras = ttk.Combobox(
+            f_printer_row,
+            textvariable=self.var_impresora_seleccionada,
+            state="readonly",
+            font=("Segoe UI", 10),
+            width=36
+        )
+        self.combo_impresoras.pack(side="left", fill="x", expand=True, padx=(0, 6))
+        self.combo_impresoras.bind("<<ComboboxSelected>>", self._on_cambio_impresora)
+
+        self.btn_recargar_imp = ttk.Button(
+            f_printer_row,
+            text="🔄 Actualizar",
+            style="Secondary.TButton",
+            command=self._actualizar_estado_impresora
+        )
+        self.btn_recargar_imp.pack(side="left", padx=(0, 4))
+
+        self.btn_fijar_predeterminada = ttk.Button(
+            f_printer_row,
+            text="📌 Fijar por defecto",
+            style="Secondary.TButton",
+            command=self._fijar_impresora_como_predeterminada
+        )
+        self.btn_fijar_predeterminada.pack(side="left")
 
         self.lbl_impresora = ttk.Label(
             card_print,
-            text="Buscando impresora...",
+            text="Buscando impresoras del sistema...",
             style="Muted.TLabel"
         )
         self.lbl_impresora.pack(anchor="w", pady=(0, 6))
@@ -240,7 +281,7 @@ class FoliadorApp(tk.Tk):
 
         self.chk_print = ttk.Checkbutton(
             card_print,
-            text="⚡ Mandar a imprimir automáticamente a la impresora al hacer clic en Generar",
+            text="⚡ Mandar a imprimir automáticamente a la impresora seleccionada al hacer clic en Generar",
             variable=self.var_auto_imprimir
         )
         self.chk_print.pack(anchor="w")
@@ -299,11 +340,34 @@ class FoliadorApp(tk.Tk):
         self.after(0, do_log)
 
     def _actualizar_estado_impresora(self):
-        hay_imp = self.engine.hay_impresora_disponible()
-        impresora_actual = self.engine.get_impresora_predeterminada()
-        if hay_imp and impresora_actual:
+        impresoras = self.engine.get_impresoras_disponibles()
+        guardada = self.engine.get_impresora_guardada()
+        predeterminada = self.engine.get_impresora_predeterminada()
+
+        if impresoras:
+            self.combo_impresoras["values"] = impresoras
+            seleccion_actual = self.var_impresora_seleccionada.get()
+
+            # Prioridad de selección:
+            # 1. Si la selección actual en UI es válida en el sistema, conservarla
+            # 2. Si la guardada previamente por el usuario existe, restaurarla
+            # 3. Si la predeterminada de Windows existe, seleccionarla
+            # 4. Primera impresora de la lista
+            if seleccion_actual in impresoras:
+                seleccionada = seleccion_actual
+            elif guardada in impresoras:
+                seleccionada = guardada
+            elif predeterminada in impresoras:
+                seleccionada = predeterminada
+            else:
+                seleccionada = impresoras[0]
+
+            self.var_impresora_seleccionada.set(seleccionada)
+            self.engine.guardar_impresora_guardada(seleccionada)
+
+            tag_defecto = " [Predeterminada del sistema]" if (predeterminada and seleccionada == predeterminada) else ""
             self.lbl_impresora.config(
-                text=f"🖨️ Impresora detectada: {impresora_actual}",
+                text=f"🖨️ Conectada: {seleccionada}{tag_defecto}",
                 style="Muted.TLabel"
             )
             self.chk_print.config(state="normal")
@@ -312,6 +376,8 @@ class FoliadorApp(tk.Tk):
             else:
                 self.btn_imprimir_lote.config(state="disabled")
         else:
+            self.combo_impresoras["values"] = []
+            self.var_impresora_seleccionada.set("")
             self.lbl_impresora.config(
                 text="⚠️ No se detectó ninguna impresora activa en Windows (Impresión desactivada)",
                 style="Danger.TLabel"
@@ -319,6 +385,38 @@ class FoliadorApp(tk.Tk):
             self.var_auto_imprimir.set(False)
             self.chk_print.config(state="disabled")
             self.btn_imprimir_lote.config(state="disabled")
+
+    def _on_cambio_impresora(self, event=None):
+        seleccionada = self.var_impresora_seleccionada.get()
+        if seleccionada:
+            self.engine.guardar_impresora_guardada(seleccionada)
+            predeterminada = self.engine.get_impresora_predeterminada()
+            tag_defecto = " [Predeterminada del sistema]" if (predeterminada and seleccionada == predeterminada) else ""
+            self.lbl_impresora.config(
+                text=f"🖨️ Conectada: {seleccionada}{tag_defecto}",
+                style="Muted.TLabel"
+            )
+            self._log(f"🖨️ Impresora destino seleccionada: {seleccionada}")
+
+    def _fijar_impresora_como_predeterminada(self):
+        seleccionada = self.var_impresora_seleccionada.get()
+        if not seleccionada:
+            messagebox.showwarning("Atención", "No hay ninguna impresora seleccionada.", parent=self)
+            return
+        try:
+            exito = self.engine.set_impresora_predeterminada_sistema(seleccionada)
+            if exito:
+                self._log(f"📌 '{seleccionada}' fijada como impresora predeterminada de Windows.")
+                self._actualizar_estado_impresora()
+                messagebox.showinfo(
+                    "Impresora Predeterminada",
+                    f"'{seleccionada}' se configuró con éxito como la impresora predeterminada del sistema Windows.",
+                    parent=self
+                )
+            else:
+                messagebox.showerror("Error", "No se pudo cambiar la impresora predeterminada de Windows.", parent=self)
+        except Exception as e:
+            messagebox.showerror("Error", f"Fallo al establecer impresora predeterminada: {e}", parent=self)
 
     def _obtener_texto_checkbox(self, plantilla):
         cod = plantilla["codigo"]
@@ -488,11 +586,13 @@ class FoliadorApp(tk.Tk):
 
                 for idx, cod in enumerate(codigos_seleccionados, 1):
                     self._log(f"[{idx}/{total_planillas}] Generando {cant} hoja(s) de {cod}...")
+                    impresora_destino = self.var_impresora_seleccionada.get()
                     res = self.engine.generar_planillas(
                         cod,
                         cant,
                         imprimir_al_generar=auto_print,
-                        doble_cara=doble_cara
+                        doble_cara=doble_cara,
+                        nombre_impresora=impresora_destino
                     )
                     resultados.append(res)
                     todos_archivos.extend([a["archivo"] for a in res["archivos"]])
@@ -528,8 +628,9 @@ class FoliadorApp(tk.Tk):
                 estado_imp_texto = f"⚠️ Guardado en carpeta (Errores de impresión en {len(errores_impresion)} planilla(s))"
 
         self._log(f"✅ Completada emisión de {num_planillas} planilla(s) · Total: {total_hojas} archivo(s) Word.")
+        imp_nombre = self.var_impresora_seleccionada.get() or self.engine.get_impresora_predeterminada()
         if auto_print and not errores_impresion:
-            self._log(f"🖨️ {total_hojas} documento(s) enviados al spooler de {self.engine.get_impresora_predeterminada()}.")
+            self._log(f"🖨️ {total_hojas} documento(s) enviados al spooler de {imp_nombre}.")
         elif errores_impresion:
             for err in errores_impresion:
                 self._log(f"⚠️ {err}")
@@ -572,7 +673,7 @@ class FoliadorApp(tk.Tk):
             )
             return
 
-        impresora_actual = self.engine.get_impresora_predeterminada()
+        impresora_actual = self.var_impresora_seleccionada.get() or self.engine.get_impresora_predeterminada()
         confirm = messagebox.askyesno(
             "Confirmar Impresión",
             f"Se enviarán {len(self.ultimos_archivos_generados)} archivo(s) Word a la impresora:\n"
@@ -591,11 +692,12 @@ class FoliadorApp(tk.Tk):
 
         def worker():
             try:
-                self.after(0, lambda: self._log(f"Iniciando impresión de {total} documento(s) (Dúplex: {'Sí' if doble_cara else 'No'})..."))
+                self.after(0, lambda: self._log(f"Iniciando impresión de {total} documento(s) en '{impresora_actual}' (Dúplex: {'Sí' if doble_cara else 'No'})..."))
                 self.engine.imprimir_lote(
                     self.ultimos_archivos_generados,
                     doble_cara=doble_cara,
-                    callback_progreso=lambda i, tot, nom: self.after(0, lambda: self._log(f"🖨️ [{i}/{tot}] Enviado a spooler: {nom}"))
+                    nombre_impresora=impresora_actual,
+                    callback_progreso=lambda i, tot, nom: self.after(0, lambda: self._log(f"🖨️ [{i}/{tot}] Enviado a spooler ({impresora_actual}): {nom}"))
                 )
                 self.after(0, self._on_impresion_completada)
             except Exception as e:
@@ -608,8 +710,9 @@ class FoliadorApp(tk.Tk):
         self.btn_imprimir_lote.config(state="normal", text="🖨️ Imprimir Último Lote")
         self.btn_generar.config(state="normal")
         total = len(self.ultimos_archivos_generados)
-        self._log(f"✅ Se enviaron {total} hojas al spooler de la impresora.")
-        messagebox.showinfo("Impresión Enviada", f"Se enviaron {total} hojas a la impresora.", parent=self)
+        imp_act = self.var_impresora_seleccionada.get() or "la impresora"
+        self._log(f"✅ Se enviaron {total} hojas al spooler de {imp_act}.")
+        messagebox.showinfo("Impresión Enviada", f"Se enviaron {total} hojas a {imp_act}.", parent=self)
 
     def _on_impresion_error(self, error_str):
         self.btn_imprimir_lote.config(state="normal", text="🖨️ Imprimir Último Lote")

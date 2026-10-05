@@ -131,6 +131,55 @@ class FolioEngine:
         })
         self._guardar_estado()
 
+    def get_preferencias_usuario(self):
+        """Retorna las preferencias guardadas del usuario."""
+        ruta = os.path.join(self.data_dir, "preferencias_usuario.json")
+        if os.path.exists(ruta):
+            try:
+                with open(ruta, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
+        return {}
+
+    def guardar_preferencia(self, clave, valor):
+        """Guarda una clave-valor en las preferencias del usuario."""
+        prefs = self.get_preferencias_usuario()
+        prefs[clave] = valor
+        ruta = os.path.join(self.data_dir, "preferencias_usuario.json")
+        try:
+            with open(ruta, "w", encoding="utf-8") as f:
+                json.dump(prefs, f, indent=2, ensure_ascii=False)
+        except Exception:
+            pass
+
+    def get_impresora_guardada(self):
+        """Retorna la última impresora seleccionada por el usuario, si existe."""
+        prefs = self.get_preferencias_usuario()
+        return prefs.get("impresora_seleccionada")
+
+    def guardar_impresora_guardada(self, nombre):
+        """Persiste la impresora seleccionada para recordarla en próximas sesiones."""
+        if nombre:
+            self.guardar_preferencia("impresora_seleccionada", nombre)
+
+    def get_impresoras_disponibles(self):
+        """Retorna la lista de nombres de impresoras instaladas/disponibles en Windows."""
+        if not WIN32_AVAILABLE:
+            return []
+        try:
+            printers = win32print.EnumPrinters(win32print.PRINTER_ENUM_LOCAL | win32print.PRINTER_ENUM_CONNECTIONS)
+            nombres = [p[2] for p in printers if p and len(p) > 2 and p[2]]
+            vistos = set()
+            resultado = []
+            for n in nombres:
+                if n not in vistos:
+                    vistos.add(n)
+                    resultado.append(n)
+            return resultado
+        except Exception:
+            return []
+
     def get_impresora_predeterminada(self):
         """Retorna el nombre de la impresora predeterminada de Windows si está disponible, o None."""
         if WIN32_AVAILABLE:
@@ -142,28 +191,35 @@ class FolioEngine:
                 pass
         return None
 
+    def set_impresora_predeterminada_sistema(self, nombre_impresora):
+        """Establece la impresora indicada como la predeterminada a nivel del sistema Windows."""
+        if not WIN32_AVAILABLE or not nombre_impresora:
+            return False
+        try:
+            win32print.SetDefaultPrinter(nombre_impresora)
+            return True
+        except Exception:
+            return False
+
     def hay_impresora_disponible(self):
         """Verifica si existe al menos una impresora accesible en Windows."""
         if not WIN32_AVAILABLE:
             return False
         try:
-            default_p = self.get_impresora_predeterminada()
-            if default_p:
-                return True
-            printers = win32print.EnumPrinters(win32print.PRINTER_ENUM_LOCAL | win32print.PRINTER_ENUM_CONNECTIONS)
-            return len(printers) > 0
+            disponibles = self.get_impresoras_disponibles()
+            return len(disponibles) > 0
         except Exception:
             return False
 
-    def set_impresora_duplex(self, activar=True):
+    def set_impresora_duplex(self, activar=True, nombre_impresora=None):
         """
-        Configura el modo dúplex (ambos lados) en la impresora predeterminada.
+        Configura el modo dúplex (ambos lados) en la impresora especificada o predeterminada.
         DMDUP_VERTICAL (2) = voltear en borde largo (vertical estándar).
         """
         if not WIN32_AVAILABLE:
             return False
         try:
-            pname = self.get_impresora_predeterminada()
+            pname = nombre_impresora or self.get_impresora_guardada() or self.get_impresora_predeterminada()
             if not pname:
                 return False
             hprinter = win32print.OpenPrinter(pname, {"DesiredAccess": win32print.PRINTER_ALL_ACCESS})
@@ -179,10 +235,11 @@ class FolioEngine:
         except Exception:
             return False
 
-    def imprimir_lote(self, lista_rutas, doble_cara=True, callback_progreso=None):
+    def imprimir_lote(self, lista_rutas, doble_cara=True, callback_progreso=None, nombre_impresora=None):
         """
         Imprime una lista de documentos Word en lote asegurando que CADA uno
         conserve la configuración dúplex (ambos lados) sin interrupciones ni cierres prematuros.
+        Envía a la impresora indicada o a la preferida/predeterminada.
         """
         if not lista_rutas:
             return True
@@ -190,13 +247,17 @@ class FolioEngine:
         if not self.hay_impresora_disponible():
             raise RuntimeError("No se detectó ninguna impresora activa o configurada en Windows.")
 
+        pname = nombre_impresora or self.get_impresora_guardada() or self.get_impresora_predeterminada()
+        if not pname:
+            raise RuntimeError("No hay ninguna impresora seleccionada ni configurada en Windows.")
+
         for r in lista_rutas:
             if not os.path.exists(r):
                 raise FileNotFoundError(f"Archivo no encontrado para imprimir: {r}")
 
         if WIN32_AVAILABLE:
             if doble_cara:
-                self.set_impresora_duplex(True)
+                self.set_impresora_duplex(True, nombre_impresora=pname)
 
             word = None
             try:
@@ -204,6 +265,23 @@ class FolioEngine:
                 word.Visible = False
                 word.DisplayAlerts = 0  # wdAlertsNone
                 word.Options.PrintBackground = False
+
+                # Asignar la impresora elegida en Word
+                try:
+                    word.ActivePrinter = pname
+                except Exception:
+                    # Intento con sufijo de puerto si Word COM lo requiere según idioma de Office
+                    asignado = False
+                    for i in range(15):
+                        for prep in ["en Ne", "on Ne"]:
+                            try:
+                                word.ActivePrinter = f"{pname} {prep}{i:02d}:"
+                                asignado = True
+                                break
+                            except Exception:
+                                pass
+                        if asignado:
+                            break
 
                 total = len(lista_rutas)
                 for i, ruta in enumerate(lista_rutas):
@@ -225,7 +303,7 @@ class FolioEngine:
                 return True
             except Exception as e:
                 # Falla en Word COM: no iterar ciegamente abriendo ventanas modales de error por cada archivo
-                raise RuntimeError(f"Error al enviar documentos a la impresora: {e}")
+                raise RuntimeError(f"Error al enviar documentos a la impresora '{pname}': {e}")
             finally:
                 if word is not None:
                     try:
@@ -235,11 +313,11 @@ class FolioEngine:
         else:
             raise RuntimeError("La impresión directa requiere controladores de impresora disponibles en Windows.")
 
-    def imprimir_documento(self, ruta_archivo, doble_cara=True):
+    def imprimir_documento(self, ruta_archivo, doble_cara=True, nombre_impresora=None):
         """
         Envía un documento Word directamente a la impresora.
         """
-        return self.imprimir_lote([ruta_archivo], doble_cara=doble_cara)
+        return self.imprimir_lote([ruta_archivo], doble_cara=doble_cara, nombre_impresora=nombre_impresora)
 
     def _inyectar_folio_quirurgico(self, xml_str, codigo, folio_str):
         """
@@ -336,7 +414,7 @@ class FolioEngine:
         p_general = re.compile(r'<w:p(?:\s+[^>]*)?>.*?</w:p>', re.DOTALL)
         return p_general.sub(repl_p, xml_str)
 
-    def generar_planillas(self, codigo, cantidad=1, carpeta_sublote=None, imprimir_al_generar=False, doble_cara=True):
+    def generar_planillas(self, codigo, cantidad=1, carpeta_sublote=None, imprimir_al_generar=False, doble_cara=True, nombre_impresora=None):
         info = self.get_plantilla_info(codigo)
         if not info:
             raise ValueError(f"Plantilla no reconocida: {codigo}")
@@ -393,7 +471,7 @@ class FolioEngine:
             else:
                 try:
                     rutas_a_imprimir = [a["archivo"] for a in archivos_generados]
-                    self.imprimir_lote(rutas_a_imprimir, doble_cara=doble_cara)
+                    self.imprimir_lote(rutas_a_imprimir, doble_cara=doble_cara, nombre_impresora=nombre_impresora)
                     impreso_exitoso = True
                 except Exception as e:
                     error_impresion = str(e)

@@ -10,3 +10,6 @@ __pycache__/
 
 # Salida de documentos emitidos
 salida/
+
+# Configuración local de usuario
+data/preferencias_usuario.json
