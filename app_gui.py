@@ -24,8 +24,8 @@ class FoliadorApp(tk.Tk):
         self.engine = FolioEngine()
 
         self.title("ColDev · Foliador Oficial PAC / POS (Preservación Exacta Word)")
-        self.geometry("880x820")
-        self.minsize(820, 750)
+        self.geometry("960x670")
+        self.minsize(860, 560)
         self.configure(bg="#0f172a")
 
         # Configurar estilos de ttk
@@ -107,6 +107,13 @@ class FoliadorApp(tk.Tk):
                   selectbackground=[("readonly", "#0284c7")],
                   selectforeground=[("readonly", "#ffffff")])
 
+        # Personalizar pestañas (Notebook)
+        style.configure("TNotebook", background="#0f172a", borderwidth=0)
+        style.configure("TNotebook.Tab", background="#1e293b", foreground="#94a3b8", font=("Segoe UI", 10, "bold"), padding=[12, 5])
+        style.map("TNotebook.Tab",
+                  background=[("selected", "#0284c7"), ("active", "#334155")],
+                  foreground=[("selected", "#ffffff"), ("active", "#f8fafc")])
+
         # Personalizar menú desplegable de la lista
         self.option_add("*TCombobox*Listbox.background", "#1e293b")
         self.option_add("*TCombobox*Listbox.foreground", "#ffffff")
@@ -127,84 +134,120 @@ class FoliadorApp(tk.Tk):
         ).pack(anchor="w", pady=(3, 0))
 
         # Contenedor principal
-        main_frame = ttk.Frame(self, padding=(24, 0, 24, 16))
+        # Contenedor principal
+        main_frame = ttk.Frame(self, padding=(20, 0, 20, 12))
         main_frame.pack(fill="both", expand=True)
 
-        # 2. SELECCIÓN DE PLANILLAS (CARD CON CHECKBOXES)
-        card_sel = ttk.Frame(main_frame, style="Card.TFrame", padding=12)
-        card_sel.pack(fill="x", pady=(0, 10))
+        # 2. SELECCIÓN DE PLANILLAS POR LÍNEAS (CARD CON PESTAÑAS)
+        card_sel = ttk.Frame(main_frame, style="Card.TFrame", padding=(12, 8))
+        card_sel.pack(fill="x", pady=(0, 8))
 
-        # Barra superior con título y botones de acción rápida
+        # Barra superior con título y botones de selección rápida
         hdr_sel = ttk.Frame(card_sel, style="Card.TFrame")
-        hdr_sel.pack(fill="x", pady=(0, 6))
+        hdr_sel.pack(fill="x", pady=(0, 4))
 
-        ttk.Label(hdr_sel, text="1. SELECCIONAR PLANILLAS A EMITIR (Podés marcar una o varias a la vez)", font=("Segoe UI", 11, "bold"), style="Card.TLabel").pack(side="left")
+        ttk.Label(
+            hdr_sel,
+            text="1. SELECCIÓN DE PLANILLAS POR LÍNEA (Puedes marcar una o varias a la vez)",
+            font=("Segoe UI", 10, "bold"),
+            style="Card.TLabel"
+        ).pack(side="left")
 
         btn_box = ttk.Frame(hdr_sel, style="Card.TFrame")
         btn_box.pack(side="right")
         ttk.Button(btn_box, text="✅ Todas", style="ActionText.TButton", command=self._seleccionar_todas).pack(side="left", padx=2)
         ttk.Button(btn_box, text="⬜ Ninguna", style="ActionText.TButton", command=self._deseleccionar_todas).pack(side="left", padx=2)
-        ttk.Button(btn_box, text="PAC (8)", style="ActionText.TButton", command=lambda: self._seleccionar_categoria("PAC")).pack(side="left", padx=2)
-        ttk.Button(btn_box, text="POS (4)", style="ActionText.TButton", command=lambda: self._seleccionar_categoria("POS")).pack(side="left", padx=2)
+        ttk.Button(btn_box, text="🦑 Cefalópodos", style="ActionText.TButton", command=lambda: self._seleccionar_linea("cefalopodos")).pack(side="left", padx=2)
+        ttk.Button(btn_box, text="🐟 Pescados", style="ActionText.TButton", command=lambda: self._seleccionar_linea("pescados")).pack(side="left", padx=2)
+        ttk.Button(btn_box, text="🧹 POS", style="ActionText.TButton", command=lambda: self._seleccionar_linea("pos")).pack(side="left", padx=2)
 
-        # Contenedor en 2 columnas para PAC y POS
-        cols_frame = ttk.Frame(card_sel, style="Card.TFrame")
-        cols_frame.pack(fill="x", pady=(2, 0))
+        # Notebook de pestañas por línea
+        self.notebook_lineas = ttk.Notebook(card_sel)
+        self.notebook_lineas.pack(fill="x", pady=(2, 0))
 
-        # Columna 1: PAC
-        col_pac = ttk.Frame(cols_frame, style="Card.TFrame")
-        col_pac.pack(side="left", fill="both", expand=True, padx=(0, 6))
-        ttk.Label(col_pac, text="📋 PLANILLAS PAC (Aseguramiento de Calidad)", style="Category.TLabel").pack(anchor="w", pady=(0, 3))
+        tab_cefalopodos = ttk.Frame(self.notebook_lineas, style="Card.TFrame", padding=(8, 6))
+        tab_pescados = ttk.Frame(self.notebook_lineas, style="Card.TFrame", padding=(8, 6))
+        tab_pos = ttk.Frame(self.notebook_lineas, style="Card.TFrame", padding=(8, 6))
+        tab_todas = ttk.Frame(self.notebook_lineas, style="Card.TFrame", padding=(8, 6))
 
-        # Columna 2: POS
-        col_pos = ttk.Frame(cols_frame, style="Card.TFrame")
-        col_pos.pack(side="left", fill="both", expand=True, padx=(6, 0))
-        ttk.Label(col_pos, text="🧹 PLANILLAS POS (Saneamiento y Operación)", style="Category.TLabel").pack(anchor="w", pady=(0, 3))
+        self.notebook_lineas.add(tab_cefalopodos, text="🦑 Línea Cefalópodos (8)")
+        self.notebook_lineas.add(tab_pescados, text="🐟 Línea Pescados (4)")
+        self.notebook_lineas.add(tab_pos, text="🧹 Saneamiento POS (4)")
+        self.notebook_lineas.add(tab_todas, text="📋 Todas las Planillas (12)")
 
+        # Inicializar variables y mapa de widgets
         for p in self.engine.plantillas:
             cod = p["codigo"]
-            var = tk.BooleanVar(value=False)
-            self.check_vars[cod] = var
-            parent_col = col_pac if p["categoria"] == "PAC" else col_pos
+            if cod not in self.check_vars:
+                self.check_vars[cod] = tk.BooleanVar(value=False)
+            self.check_widgets[cod] = []
 
-            txt = self._obtener_texto_checkbox(p)
-            chk = ttk.Checkbutton(
-                parent_col,
-                text=txt,
-                variable=var,
-                command=self._al_cambiar_seleccion_checkboxes
-            )
-            chk.pack(anchor="w", pady=1)
-            self.check_widgets[cod] = chk
+        def poblar_pestana(tab_parent, lista_filtrada, mensaje_info=None):
+            f_grid = ttk.Frame(tab_parent, style="Card.TFrame")
+            f_grid.pack(fill="x")
+            f_grid.columnconfigure(0, weight=1)
+            f_grid.columnconfigure(1, weight=1)
+
+            mitad = (len(lista_filtrada) + 1) // 2
+            for idx, p in enumerate(lista_filtrada):
+                col = 0 if idx < mitad else 1
+                row = idx if idx < mitad else (idx - mitad)
+                cod = p["codigo"]
+                var = self.check_vars[cod]
+                txt = self._obtener_texto_checkbox(p)
+                chk = ttk.Checkbutton(
+                    f_grid,
+                    text=txt,
+                    variable=var,
+                    command=self._al_cambiar_seleccion_checkboxes
+                )
+                chk.grid(row=row, column=col, sticky="w", padx=6, pady=1)
+                self.check_widgets[cod].append(chk)
+
+            if mensaje_info:
+                ttk.Label(
+                    tab_parent,
+                    text=mensaje_info,
+                    style="Muted.TLabel",
+                    font=("Segoe UI", 8, "italic")
+                ).pack(anchor="w", pady=(4, 0), padx=6)
+
+        # Filtrar plantillas según línea configurada
+        plantillas_cefalopodos = [p for p in self.engine.plantillas if p.get("linea", "").lower() in ("cefalopodos", "ambas")]
+        plantillas_pescados = [p for p in self.engine.plantillas if p.get("linea", "").lower() in ("pescados", "ambas")]
+        plantillas_pos = [p for p in self.engine.plantillas if p.get("linea", "").lower() == "pos" or p.get("categoria") == "POS"]
+
+        poblar_pestana(tab_cefalopodos, plantillas_cefalopodos)
+        poblar_pestana(
+            tab_pescados,
+            plantillas_pescados,
+            "ℹ️ Línea Pescados (Merluza / Congrio / Reineta). Próximamente se integrarán las plantillas de recepción específicas."
+        )
+        poblar_pestana(tab_pos, plantillas_pos)
+        poblar_pestana(tab_todas, self.engine.plantillas)
 
         # 3. ESTADO DEL FOLIO Y CANTIDAD (CARD)
-        card_folio = ttk.Frame(main_frame, style="Card.TFrame", padding=12)
-        card_folio.pack(fill="x", pady=(0, 10))
-
-        ttk.Label(card_folio, text="2. ESTADO DEL PLANILLERO Y CORRELATIVO", font=("Segoe UI", 11, "bold"), style="Card.TLabel").pack(anchor="w", pady=(0, 6))
+        card_folio = ttk.Frame(main_frame, style="Card.TFrame", padding=(12, 6))
+        card_folio.pack(fill="x", pady=(0, 8))
 
         grid_frame = ttk.Frame(card_folio, style="Card.TFrame")
         grid_frame.pack(fill="x")
 
-        # Columna 1: Último folio / Selección
+        # Columna 1: Folio actual
         f1 = ttk.Frame(grid_frame, style="Card.TFrame")
-        f1.grid(row=0, column=0, sticky="w", padx=(0, 20))
-
+        f1.grid(row=0, column=0, sticky="w", padx=(0, 24))
         ttk.Label(f1, text="Planilla / Folio Actual:", style="Muted.TLabel").pack(anchor="w")
         sub_f1 = ttk.Frame(f1, style="Card.TFrame")
-        sub_f1.pack(anchor="w", pady=(4, 0))
+        sub_f1.pack(anchor="w", pady=(2, 0))
         ttk.Label(sub_f1, textvariable=self.var_ultimo_folio, style="Warning.TLabel").pack(side="left", padx=(0, 8))
-        btn_modificar = ttk.Button(sub_f1, text="✏️ Sincronizar Físico", style="Small.TButton", command=self._sincronizar_folio_fisico)
-        btn_modificar.pack(side="left")
+        ttk.Button(sub_f1, text="✏️ Sincronizar Físico", style="Small.TButton", command=self._sincronizar_folio_fisico).pack(side="left")
 
-        # Columna 2: Cantidad a emitir por planilla
+        # Columna 2: Cantidad por planilla
         f2 = ttk.Frame(grid_frame, style="Card.TFrame")
-        f2.grid(row=0, column=1, sticky="w", padx=(0, 20))
-
+        f2.grid(row=0, column=1, sticky="w", padx=(0, 24))
         ttk.Label(f2, text="Cantidad por Planilla:", style="Muted.TLabel").pack(anchor="w")
         sub_f2 = ttk.Frame(f2, style="Card.TFrame")
-        sub_f2.pack(anchor="w", pady=(4, 0))
-
+        sub_f2.pack(anchor="w", pady=(2, 0))
         spin_cant = ttk.Spinbox(
             sub_f2,
             from_=1,
@@ -215,32 +258,27 @@ class FoliadorApp(tk.Tk):
         )
         spin_cant.pack(side="left", padx=(0, 4))
         spin_cant.bind("<KeyRelease>", lambda e: self._actualizar_calculo_rango())
-
         ttk.Button(sub_f2, text="+1", style="Secondary.TButton", width=3, command=lambda: self._sumar_cantidad(1)).pack(side="left", padx=1)
         ttk.Button(sub_f2, text="+5", style="Secondary.TButton", width=3, command=lambda: self._sumar_cantidad(5)).pack(side="left", padx=1)
         ttk.Button(sub_f2, text="+10", style="Secondary.TButton", width=3, command=lambda: self._sumar_cantidad(10)).pack(side="left", padx=1)
 
-        # Columna 3: Próximo folio / Resumen total
+        # Columna 3: Resumen
         f3 = ttk.Frame(grid_frame, style="Card.TFrame")
         f3.grid(row=0, column=2, sticky="w")
-
         ttk.Label(f3, text="Total a Emitir (Centrados):", style="Muted.TLabel").pack(anchor="w")
-        ttk.Label(f3, textvariable=self.var_resumen_rango, style="Highlight.TLabel").pack(anchor="w", pady=(4, 0))
+        ttk.Label(f3, textvariable=self.var_resumen_rango, style="Highlight.TLabel").pack(anchor="w", pady=(2, 0))
 
         # 4. CONFIGURACIÓN DE IMPRESIÓN (CARD)
-        card_print = ttk.Frame(main_frame, style="Card.TFrame", padding=14)
-        card_print.pack(fill="x", pady=(0, 12))
+        card_print = ttk.Frame(main_frame, style="Card.TFrame", padding=(12, 8))
+        card_print.pack(fill="x", pady=(0, 8))
 
-        ttk.Label(card_print, text="3. SALIDA E IMPRESIÓN DIRECTA", font=("Segoe UI", 11, "bold"), style="Card.TLabel").pack(anchor="w", pady=(0, 6))
+        f_printer_top = ttk.Frame(card_print, style="Card.TFrame")
+        f_printer_top.pack(fill="x", pady=(0, 4))
 
-        # Fila de selección de impresora del sistema
-        f_printer_row = ttk.Frame(card_print, style="Card.TFrame")
-        f_printer_row.pack(fill="x", pady=(0, 6))
-
-        ttk.Label(f_printer_row, text="🖨️ Impresora destino:", font=("Segoe UI", 10, "bold"), style="Card.TLabel").pack(side="left", padx=(0, 8))
+        ttk.Label(f_printer_top, text="🖨️ Impresora destino:", font=("Segoe UI", 10, "bold"), style="Card.TLabel").pack(side="left", padx=(0, 8))
 
         self.combo_impresoras = ttk.Combobox(
-            f_printer_row,
+            f_printer_top,
             textvariable=self.var_impresora_seleccionada,
             state="readonly",
             font=("Segoe UI", 10),
@@ -250,7 +288,7 @@ class FoliadorApp(tk.Tk):
         self.combo_impresoras.bind("<<ComboboxSelected>>", self._on_cambio_impresora)
 
         self.btn_recargar_imp = ttk.Button(
-            f_printer_row,
+            f_printer_top,
             text="🔄 Actualizar",
             style="Secondary.TButton",
             command=self._actualizar_estado_impresora
@@ -258,37 +296,41 @@ class FoliadorApp(tk.Tk):
         self.btn_recargar_imp.pack(side="left", padx=(0, 4))
 
         self.btn_fijar_predeterminada = ttk.Button(
-            f_printer_row,
+            f_printer_top,
             text="📌 Fijar por defecto",
             style="Secondary.TButton",
             command=self._fijar_impresora_como_predeterminada
         )
         self.btn_fijar_predeterminada.pack(side="left")
 
+        # Fila 2 de impresión: Estado de impresora y opciones dúplex / auto-print
+        f_printer_sub = ttk.Frame(card_print, style="Card.TFrame")
+        f_printer_sub.pack(fill="x", pady=(2, 0))
+
         self.lbl_impresora = ttk.Label(
-            card_print,
+            f_printer_sub,
             text="Buscando impresoras del sistema...",
             style="Muted.TLabel"
         )
-        self.lbl_impresora.pack(anchor="w", pady=(0, 6))
+        self.lbl_impresora.pack(side="left", padx=(0, 16))
 
         self.chk_duplex = ttk.Checkbutton(
-            card_print,
-            text="📄 Imprimir por ambos lados (Dúplex: Planilla adelante + Instructivo atrás en 1 sola hoja)",
+            f_printer_sub,
+            text="📄 Imprimir por ambos lados (Dúplex)",
             variable=self.var_doble_cara
         )
-        self.chk_duplex.pack(anchor="w", pady=(0, 4))
+        self.chk_duplex.pack(side="left", padx=(0, 16))
 
         self.chk_print = ttk.Checkbutton(
-            card_print,
-            text="⚡ Mandar a imprimir automáticamente a la impresora seleccionada al hacer clic en Generar",
+            f_printer_sub,
+            text="⚡ Mandar a imprimir automáticamente al hacer clic en Generar",
             variable=self.var_auto_imprimir
         )
-        self.chk_print.pack(anchor="w")
+        self.chk_print.pack(side="left")
 
-        # 5. BOTONES DE ACCIÓN
+        # 5. BOTONES DE ACCIÓN (SIEMPRE VISIBLES Y DESTACADOS)
         btn_bar = ttk.Frame(main_frame)
-        btn_bar.pack(fill="x", pady=(2, 12))
+        btn_bar.pack(fill="x", pady=(2, 8))
 
         self.btn_generar = ttk.Button(
             btn_bar,
@@ -315,7 +357,7 @@ class FoliadorApp(tk.Tk):
         btn_abrir.pack(side="right")
 
         # 6. PANEL DE REGISTRO / AUDITORÍA
-        card_log = ttk.Frame(main_frame, style="Card.TFrame", padding=12)
+        card_log = ttk.Frame(main_frame, style="Card.TFrame", padding=(12, 6))
         card_log.pack(fill="both", expand=True)
 
         ttk.Label(card_log, text="REGISTRO DE ACTIVIDAD:", font=("Segoe UI", 9, "bold"), style="Card.TLabel").pack(anchor="w")
@@ -326,12 +368,12 @@ class FoliadorApp(tk.Tk):
             fg="#94a3b8",
             insertbackground="#ffffff",
             font=("Consolas", 9),
-            height=6,
+            height=3,
             relief="flat",
             wrap="word"
         )
-        self.txt_log.pack(fill="both", expand=True, pady=(4, 0))
-        self._log("Listo. Seleccioná una planilla y hacé clic en Generar.")
+        self.txt_log.pack(fill="both", expand=True, pady=(2, 0))
+        self._log("Listo. Selecciona una planilla y haz clic en Generar.")
 
     def _log(self, mensaje):
         def do_log():
@@ -432,7 +474,13 @@ class FoliadorApp(tk.Tk):
         for p in self.engine.plantillas:
             cod = p["codigo"]
             if cod in self.check_widgets:
-                self.check_widgets[cod].config(text=self._obtener_texto_checkbox(p))
+                txt = self._obtener_texto_checkbox(p)
+                widgets = self.check_widgets[cod]
+                if isinstance(widgets, list):
+                    for w in widgets:
+                        w.config(text=txt)
+                else:
+                    widgets.config(text=txt)
 
     def _seleccionar_todas(self):
         for var in self.check_vars.values():
@@ -442,6 +490,20 @@ class FoliadorApp(tk.Tk):
     def _deseleccionar_todas(self):
         for var in self.check_vars.values():
             var.set(False)
+        self._al_cambiar_seleccion_checkboxes()
+
+    def _seleccionar_linea(self, linea_deseada):
+        for p in self.engine.plantillas:
+            cod = p["codigo"]
+            linea = p.get("linea", p.get("categoria", "")).lower()
+            if linea_deseada == "cefalopodos" and linea in ("cefalopodos", "ambas"):
+                self.check_vars[cod].set(True)
+            elif linea_deseada == "pescados" and linea in ("pescados", "ambas"):
+                self.check_vars[cod].set(True)
+            elif linea_deseada == "pos" and (linea == "pos" or p.get("categoria") == "POS"):
+                self.check_vars[cod].set(True)
+            else:
+                self.check_vars[cod].set(False)
         self._al_cambiar_seleccion_checkboxes()
 
     def _seleccionar_categoria(self, cat):
@@ -466,7 +528,7 @@ class FoliadorApp(tk.Tk):
         total_sel = len(seleccionadas)
         if total_sel == 0:
             self.var_ultimo_folio.set("Ninguna elegida")
-            self.var_resumen_rango.set("Marcá al menos 1 planilla")
+            self.var_resumen_rango.set("Marca al menos 1 planilla")
             self.btn_generar.config(state="disabled")
         elif total_sel == 1:
             self.btn_generar.config(state="normal")
@@ -509,7 +571,7 @@ class FoliadorApp(tk.Tk):
         ventana_sync.transient(self)
         ventana_sync.grab_set()
 
-        ttk.Label(ventana_sync, text="Elegí la planilla que querés sincronizar:", style="Card.TLabel", font=("Segoe UI", 10, "bold")).pack(pady=(16, 6), padx=16, anchor="w")
+        ttk.Label(ventana_sync, text="Elige la planilla que deseas sincronizar:", style="Card.TLabel", font=("Segoe UI", 10, "bold")).pack(pady=(16, 6), padx=16, anchor="w")
 
         opciones = [f"{p['codigo']} · {p['nombre']}" for p in self.engine.plantillas]
         combo = ttk.Combobox(ventana_sync, values=opciones, state="readonly", width=48)
@@ -549,7 +611,7 @@ class FoliadorApp(tk.Tk):
     def _generar_planillas(self):
         codigos_seleccionados = [cod for cod, var in self.check_vars.items() if var.get()]
         if not codigos_seleccionados:
-            messagebox.showwarning("Atención", "Por favor seleccioná al menos una planilla marcando su casilla.", parent=self)
+            messagebox.showwarning("Atención", "Por favor selecciona al menos una planilla marcando su casilla.", parent=self)
             return
 
         try:
@@ -647,7 +709,7 @@ class FoliadorApp(tk.Tk):
             f"• Detalle de rangos:\n{desglose}\n\n"
             f"• Logos y formato: 100% Preservados intactos\n"
             f"• Impresión: {estado_imp_texto}\n\n"
-            f"¿Deseás abrir la carpeta de salida ahora?"
+            f"¿Deseas abrir la carpeta de salida ahora?"
         )
 
         abrir = messagebox.askyesno("Emisión Completada", msg_exito, parent=self)
@@ -678,7 +740,7 @@ class FoliadorApp(tk.Tk):
             "Confirmar Impresión",
             f"Se enviarán {len(self.ultimos_archivos_generados)} archivo(s) Word a la impresora:\n"
             f"{impresora_actual}\n\n"
-            f"¿Deseás continuar?",
+            f"¿Deseas continuar?",
             parent=self
         )
         if not confirm:

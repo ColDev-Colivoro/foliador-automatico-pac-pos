@@ -220,8 +220,8 @@
     ]
   },
   "POS_R1": {
-    "ultimo_folio": 0,
-    "fecha_actualizacion": "2026-10-03T13:16:31.811882",
+    "ultimo_folio": 394,
+    "fecha_actualizacion": "2026-10-05T14:45:14.184734",
     "historial": [
       {
         "fecha": "2026-10-03T13:16:31.811884",
@@ -229,12 +229,33 @@
         "folio_final": 0,
         "cantidad": 0,
         "accion": "Inicialización base"
+      },
+      {
+        "fecha": "2026-10-05T14:35:14.755885",
+        "folio_inicial": 91,
+        "folio_final": 91,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T14:35:48.932937",
+        "folio_inicial": 391,
+        "folio_final": 391,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T14:45:14.184744",
+        "folio_inicial": 394,
+        "folio_final": 394,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
       }
     ]
   },
   "POS_R2": {
-    "ultimo_folio": 340,
-    "fecha_actualizacion": "2026-10-03T13:16:31.811891",
+    "ultimo_folio": 394,
+    "fecha_actualizacion": "2026-10-05T14:45:22.147392",
     "historial": [
       {
         "fecha": "2026-10-03T13:16:31.811893",
@@ -242,12 +263,26 @@
         "folio_final": 340,
         "cantidad": 0,
         "accion": "Inicialización base"
+      },
+      {
+        "fecha": "2026-10-05T14:35:38.828704",
+        "folio_inicial": 391,
+        "folio_final": 391,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T14:45:22.147402",
+        "folio_inicial": 394,
+        "folio_final": 394,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
       }
     ]
   },
   "POS_R3": {
-    "ultimo_folio": 0,
-    "fecha_actualizacion": "2026-10-03T13:16:31.811899",
+    "ultimo_folio": 394,
+    "fecha_actualizacion": "2026-10-05T14:45:29.322952",
     "historial": [
       {
         "fecha": "2026-10-03T13:16:31.811901",
@@ -255,6 +290,13 @@
         "folio_final": 0,
         "cantidad": 0,
         "accion": "Inicialización base"
+      },
+      {
+        "fecha": "2026-10-05T14:45:29.322961",
+        "folio_inicial": 394,
+        "folio_final": 394,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
       }
     ]
   },
