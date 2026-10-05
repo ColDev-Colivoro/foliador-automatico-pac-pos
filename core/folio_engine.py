@@ -132,13 +132,28 @@ class FolioEngine:
         self._guardar_estado()
 
     def get_impresora_predeterminada(self):
-        """Retorna el nombre de la impresora predeterminada de Windows si está disponible."""
+        """Retorna el nombre de la impresora predeterminada de Windows si está disponible, o None."""
         if WIN32_AVAILABLE:
             try:
-                return win32print.GetDefaultPrinter()
+                pname = win32print.GetDefaultPrinter()
+                if pname and pname.strip():
+                    return pname.strip()
             except Exception:
                 pass
-        return "Impresora predeterminada de Windows"
+        return None
+
+    def hay_impresora_disponible(self):
+        """Verifica si existe al menos una impresora accesible en Windows."""
+        if not WIN32_AVAILABLE:
+            return False
+        try:
+            default_p = self.get_impresora_predeterminada()
+            if default_p:
+                return True
+            printers = win32print.EnumPrinters(win32print.PRINTER_ENUM_LOCAL | win32print.PRINTER_ENUM_CONNECTIONS)
+            return len(printers) > 0
+        except Exception:
+            return False
 
     def set_impresora_duplex(self, activar=True):
         """
@@ -148,7 +163,9 @@ class FolioEngine:
         if not WIN32_AVAILABLE:
             return False
         try:
-            pname = win32print.GetDefaultPrinter()
+            pname = self.get_impresora_predeterminada()
+            if not pname:
+                return False
             hprinter = win32print.OpenPrinter(pname, {"DesiredAccess": win32print.PRINTER_ALL_ACCESS})
             try:
                 info = win32print.GetPrinter(hprinter, 2)
@@ -170,6 +187,9 @@ class FolioEngine:
         if not lista_rutas:
             return True
 
+        if not self.hay_impresora_disponible():
+            raise RuntimeError("No se detectó ninguna impresora activa o configurada en Windows.")
+
         for r in lista_rutas:
             if not os.path.exists(r):
                 raise FileNotFoundError(f"Archivo no encontrado para imprimir: {r}")
@@ -180,18 +200,16 @@ class FolioEngine:
 
             word = None
             try:
-                # Usar DispatchEx para instanciar un proceso limpio e independiente de Word
                 word = win32com.client.DispatchEx("Word.Application")
                 word.Visible = False
                 word.DisplayAlerts = 0  # wdAlertsNone
-                word.Options.PrintBackground = False  # Spooling síncrono para que no se corten los documentos
+                word.Options.PrintBackground = False
 
                 total = len(lista_rutas)
                 for i, ruta in enumerate(lista_rutas):
                     ruta_abs = os.path.abspath(ruta)
                     doc = word.Documents.Open(ruta_abs, ReadOnly=True)
                     try:
-                        # Background=False fuerza a Word a esperar que el trabajo se envíe completo al spooler
                         doc.PrintOut(Background=False)
                     finally:
                         doc.Close(False)
@@ -202,17 +220,12 @@ class FolioEngine:
                         except Exception:
                             pass
 
-                    # Pausa prudente para que el spooler de Windows y la impresora procesen sin colisión
                     time.sleep(0.5)
 
                 return True
             except Exception as e:
-                # Si falla COM, intentar vía ShellExecute archivo por archivo con pausa
-                for i, ruta in enumerate(lista_rutas):
-                    ruta_abs = os.path.abspath(ruta)
-                    win32api.ShellExecute(0, "print", ruta_abs, None, ".", 0)
-                    time.sleep(1.5)
-                return True
+                # Falla en Word COM: no iterar ciegamente abriendo ventanas modales de error por cada archivo
+                raise RuntimeError(f"Error al enviar documentos a la impresora: {e}")
             finally:
                 if word is not None:
                     try:
@@ -220,12 +233,7 @@ class FolioEngine:
                     except Exception:
                         pass
         else:
-            for ruta in lista_rutas:
-                ruta_abs = os.path.abspath(ruta)
-                cmd = f'Start-Process -FilePath "{ruta_abs}" -Verb Print'
-                subprocess.run(["powershell", "-Command", cmd], check=True)
-                time.sleep(1.0)
-            return True
+            raise RuntimeError("La impresión directa requiere controladores de impresora disponibles en Windows.")
 
     def imprimir_documento(self, ruta_archivo, doble_cara=True):
         """
@@ -377,9 +385,18 @@ class FolioEngine:
                 "archivo": ruta_salida,
             })
 
+        impreso_exitoso = False
+        error_impresion = None
         if imprimir_al_generar:
-            rutas_a_imprimir = [a["archivo"] for a in archivos_generados]
-            self.imprimir_lote(rutas_a_imprimir, doble_cara=doble_cara)
+            if not self.hay_impresora_disponible():
+                error_impresion = "No se detectó ninguna impresora activa en Windows."
+            else:
+                try:
+                    rutas_a_imprimir = [a["archivo"] for a in archivos_generados]
+                    self.imprimir_lote(rutas_a_imprimir, doble_cara=doble_cara)
+                    impreso_exitoso = True
+                except Exception as e:
+                    error_impresion = str(e)
 
         self.estado[codigo]["ultimo_folio"] = folio_final
         self.estado[codigo]["fecha_actualizacion"] = datetime.datetime.now().isoformat()
@@ -390,7 +407,7 @@ class FolioEngine:
             "cantidad": cantidad,
             "accion": f"Emisión de {cantidad} planilla(s) [{folio_inicial:0{digitos}d} al {folio_final:0{digitos}d}]",
             "carpeta": dest_dir,
-            "impreso": imprimir_al_generar
+            "impreso": impreso_exitoso
         })
         self._guardar_estado()
 
@@ -402,5 +419,6 @@ class FolioEngine:
             "cantidad": cantidad,
             "carpeta_salida": dest_dir,
             "archivos": archivos_generados,
-            "impreso": imprimir_al_generar
+            "impreso": impreso_exitoso,
+            "error_impresion": error_impresion
         }

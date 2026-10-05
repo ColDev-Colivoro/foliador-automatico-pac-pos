@@ -10,6 +10,7 @@ Selector de alta visibilidad y contraste.
 import os
 import sys
 import subprocess
+import threading
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 
@@ -45,6 +46,7 @@ class FoliadorApp(tk.Tk):
 
         # Construir UI
         self._construir_ui()
+        self._actualizar_estado_impresora()
 
         # Cargar primera plantilla por defecto
         if self.engine.plantillas:
@@ -68,6 +70,7 @@ class FoliadorApp(tk.Tk):
 
         style.configure("Highlight.TLabel", background="#1e293b", foreground="#10b981", font=("Segoe UI", 13, "bold"))
         style.configure("Warning.TLabel", background="#1e293b", foreground="#f59e0b", font=("Segoe UI", 12, "bold"))
+        style.configure("Danger.TLabel", background="#1e293b", foreground="#f87171", font=("Segoe UI", 10, "bold"))
 
         style.configure("Primary.TButton", background="#059669", foreground="#ffffff", font=("Segoe UI", 11, "bold"), padding=10)
         style.map("Primary.TButton",
@@ -209,38 +212,38 @@ class FoliadorApp(tk.Tk):
 
         ttk.Label(card_print, text="3. SALIDA E IMPRESIÓN DIRECTA", font=("Segoe UI", 11, "bold"), style="Card.TLabel").pack(anchor="w", pady=(0, 4))
 
-        impresora_actual = self.engine.get_impresora_predeterminada()
-        ttk.Label(
+        self.lbl_impresora = ttk.Label(
             card_print,
-            text=f"🖨️ Impresora detectada: {impresora_actual}",
+            text="Buscando impresora...",
             style="Muted.TLabel"
-        ).pack(anchor="w", pady=(0, 6))
+        )
+        self.lbl_impresora.pack(anchor="w", pady=(0, 6))
 
-        chk_duplex = ttk.Checkbutton(
+        self.chk_duplex = ttk.Checkbutton(
             card_print,
             text="📄 Imprimir por ambos lados (Dúplex: Planilla adelante + Instructivo atrás en 1 sola hoja)",
             variable=self.var_doble_cara
         )
-        chk_duplex.pack(anchor="w", pady=(0, 4))
+        self.chk_duplex.pack(anchor="w", pady=(0, 4))
 
-        chk_print = ttk.Checkbutton(
+        self.chk_print = ttk.Checkbutton(
             card_print,
             text="⚡ Mandar a imprimir automáticamente a la impresora al hacer clic en Generar",
             variable=self.var_auto_imprimir
         )
-        chk_print.pack(anchor="w")
+        self.chk_print.pack(anchor="w")
 
         # 5. BOTONES DE ACCIÓN
         btn_bar = ttk.Frame(main_frame)
         btn_bar.pack(fill="x", pady=(2, 12))
 
-        btn_generar = ttk.Button(
+        self.btn_generar = ttk.Button(
             btn_bar,
             text="🚀 GENERAR PLANILLAS FOLIADAS",
             style="Primary.TButton",
             command=self._generar_planillas
         )
-        btn_generar.pack(side="left", fill="x", expand=True, padx=(0, 8))
+        self.btn_generar.pack(side="left", fill="x", expand=True, padx=(0, 8))
 
         self.btn_imprimir_lote = ttk.Button(
             btn_bar,
@@ -278,8 +281,32 @@ class FoliadorApp(tk.Tk):
         self._log("Listo. Seleccioná una planilla y hacé clic en Generar.")
 
     def _log(self, mensaje):
-        self.txt_log.insert("end", f"• {mensaje}\n")
-        self.txt_log.see("end")
+        def do_log():
+            self.txt_log.insert("end", f"• {mensaje}\n")
+            self.txt_log.see("end")
+        self.after(0, do_log)
+
+    def _actualizar_estado_impresora(self):
+        hay_imp = self.engine.hay_impresora_disponible()
+        impresora_actual = self.engine.get_impresora_predeterminada()
+        if hay_imp and impresora_actual:
+            self.lbl_impresora.config(
+                text=f"🖨️ Impresora detectada: {impresora_actual}",
+                style="Muted.TLabel"
+            )
+            self.chk_print.config(state="normal")
+            if self.ultimos_archivos_generados:
+                self.btn_imprimir_lote.config(state="normal")
+            else:
+                self.btn_imprimir_lote.config(state="disabled")
+        else:
+            self.lbl_impresora.config(
+                text="⚠️ No se detectó ninguna impresora activa en Windows (Impresión desactivada)",
+                style="Danger.TLabel"
+            )
+            self.var_auto_imprimir.set(False)
+            self.chk_print.config(state="disabled")
+            self.btn_imprimir_lote.config(state="disabled")
 
     def _obtener_codigo_actual(self):
         val = self.combo_plantillas.get()
@@ -351,7 +378,7 @@ class FoliadorApp(tk.Tk):
     def _generar_planillas(self):
         codigo = self._obtener_codigo_actual()
         if not codigo:
-            messagebox.showerror("Error", "Por favor seleccioná una planilla.")
+            messagebox.showerror("Error", "Por favor seleccioná una planilla.", parent=self)
             return
 
         try:
@@ -359,71 +386,140 @@ class FoliadorApp(tk.Tk):
             if cant < 1:
                 raise ValueError()
         except Exception:
-            messagebox.showerror("Error", "La cantidad debe ser un número entero mayor a 0.")
+            messagebox.showerror("Error", "La cantidad debe ser un número entero mayor a 0.", parent=self)
             return
 
         info = self.engine.get_plantilla_info(codigo)
         auto_print = self.var_auto_imprimir.get()
         doble_cara = self.var_doble_cara.get()
 
-        try:
-            res = self.engine.generar_planillas(
-                codigo,
-                cant,
-                imprimir_al_generar=auto_print,
-                doble_cara=doble_cara
+        if auto_print and not self.engine.hay_impresora_disponible():
+            messagebox.showwarning(
+                "Sin Impresora",
+                "No hay una impresora configurada. Se generarán los archivos Word en disco sin enviarlos a imprimir.",
+                parent=self
             )
-            self.ultimos_archivos_generados = [a["archivo"] for a in res["archivos"]]
-            self._al_cambiar_plantilla()
+            auto_print = False
+            self.var_auto_imprimir.set(False)
 
-            msg_exito = (
-                f"✅ ¡Planillas generadas con éxito!\n\n"
-                f"• Planilla: {res['nombre']}\n"
-                f"• Rango de Folios: {res['folio_inicial']} al {res['folio_final']} (centrados)\n"
-                f"• Total emitido: {res['cantidad']} archivo(s) Word (.docx)\n"
-                f"• Logos y formato: 100% Preservados intactos\n"
-                f"• Impresión: {'Enviado a impresora' if auto_print else 'Guardado listo en carpeta'}\n\n"
-                f"¿Deseás abrir la carpeta de salida ahora?"
-            )
+        # Desactivar botones durante el procesamiento para evitar dobles clics
+        self.btn_generar.config(state="disabled", text="⏳ Generando planillas...")
+        self.btn_imprimir_lote.config(state="disabled")
 
-            self._log(f"Generadas {res['cantidad']} hojas de {codigo} [Folios {res['folio_inicial']} al {res['folio_final']}].")
-            if auto_print:
-                self._log(f"🖨️ {res['cantidad']} documento(s) enviados a imprimir a {self.engine.get_impresora_predeterminada()}.")
+        def worker():
+            try:
+                self._log(f"Iniciando generación de {cant} planilla(s) para {codigo}...")
+                res = self.engine.generar_planillas(
+                    codigo,
+                    cant,
+                    imprimir_al_generar=auto_print,
+                    doble_cara=doble_cara
+                )
+                self.after(0, lambda: self._on_generacion_completada(res, auto_print))
+            except Exception as e:
+                err_msg = str(e)
+                self.after(0, lambda: self._on_generacion_error(err_msg))
 
-            abrir = messagebox.askyesno("Emisión Completada", msg_exito, parent=self)
-            if abrir:
-                self._abrir_carpeta(res["carpeta_salida"])
+        threading.Thread(target=worker, daemon=True).start()
 
-        except Exception as e:
-            messagebox.showerror("Error al Generar", f"Ocurrió un error inesperado:\n{e}", parent=self)
+    def _on_generacion_completada(self, res, auto_print):
+        self.btn_generar.config(state="normal", text="🚀 GENERAR PLANILLAS FOLIADAS")
+        self._actualizar_estado_impresora()
+        self.ultimos_archivos_generados = [a["archivo"] for a in res["archivos"]]
+        if self.engine.hay_impresora_disponible() and self.ultimos_archivos_generados:
+            self.btn_imprimir_lote.config(state="normal")
+        self._al_cambiar_plantilla()
+
+        estado_imp_texto = "Guardado listo en carpeta"
+        if auto_print:
+            if res.get("impreso"):
+                estado_imp_texto = "Enviado a impresora con éxito"
+            else:
+                estado_imp_texto = f"⚠️ Guardado en carpeta (No se pudo imprimir: {res.get('error_impresion', 'Sin impresora')})"
+
+        self._log(f"✅ Generadas {res['cantidad']} hojas de {res['codigo']} [Folios {res['folio_inicial']} al {res['folio_final']}].")
+        if auto_print and res.get("impreso"):
+            self._log(f"🖨️ {res['cantidad']} documento(s) enviados a imprimir a {self.engine.get_impresora_predeterminada()}.")
+        elif res.get("error_impresion"):
+            self._log(f"⚠️ Aviso impresión: {res.get('error_impresion')}")
+
+        msg_exito = (
+            f"✅ ¡Planillas generadas con éxito!\n\n"
+            f"• Planilla: {res['nombre']}\n"
+            f"• Rango de Folios: {res['folio_inicial']} al {res['folio_final']} (centrados)\n"
+            f"• Total emitido: {res['cantidad']} archivo(s) Word (.docx)\n"
+            f"• Logos y formato: 100% Preservados intactos\n"
+            f"• Impresión: {estado_imp_texto}\n\n"
+            f"¿Deseás abrir la carpeta de salida ahora?"
+        )
+
+        abrir = messagebox.askyesno("Emisión Completada", msg_exito, parent=self)
+        if abrir:
+            self._abrir_carpeta(res["carpeta_salida"])
+
+    def _on_generacion_error(self, error_str):
+        self.btn_generar.config(state="normal", text="🚀 GENERAR PLANILLAS FOLIADAS")
+        self._actualizar_estado_impresora()
+        self._log(f"❌ Error en generación: {error_str}")
+        messagebox.showerror("Error al Generar", f"Ocurrió un error inesperado:\n{error_str}", parent=self)
 
     def _imprimir_ultimo_lote(self):
         if not self.ultimos_archivos_generados:
-            messagebox.showinfo("Imprimir", "Aún no se ha generado ningún lote en esta sesión.")
+            messagebox.showinfo("Imprimir", "Aún no se ha generado ningún lote en esta sesión.", parent=self)
             return
 
+        if not self.engine.hay_impresora_disponible():
+            messagebox.showwarning(
+                "Sin Impresora",
+                "No hay ninguna impresora activa o configurada en Windows.\nVerifique la conexión antes de imprimir.",
+                parent=self
+            )
+            return
+
+        impresora_actual = self.engine.get_impresora_predeterminada()
         confirm = messagebox.askyesno(
             "Confirmar Impresión",
             f"Se enviarán {len(self.ultimos_archivos_generados)} archivo(s) Word a la impresora:\n"
-            f"{self.engine.get_impresora_predeterminada()}\n\n"
+            f"{impresora_actual}\n\n"
             f"¿Deseás continuar?",
             parent=self
         )
         if not confirm:
             return
 
-        try:
-            doble_cara = self.var_doble_cara.get()
-            total = len(self.ultimos_archivos_generados)
-            self._log(f"Iniciando impresión de {total} documento(s) (Dúplex: {'Sí' if doble_cara else 'No'})...")
-            self.engine.imprimir_lote(
-                self.ultimos_archivos_generados,
-                doble_cara=doble_cara,
-                callback_progreso=lambda i, tot, nom: self._log(f"🖨️ [{i}/{tot}] Impreso: {nom}")
-            )
-            messagebox.showinfo("Impresión Enviada", f"Se enviaron {total} hojas a la impresora.")
-        except Exception as e:
-            messagebox.showerror("Error de Impresión", f"No se pudo completar la impresión:\n{e}")
+        doble_cara = self.var_doble_cara.get()
+        total = len(self.ultimos_archivos_generados)
+
+        self.btn_imprimir_lote.config(state="disabled", text="⏳ Imprimiendo...")
+        self.btn_generar.config(state="disabled")
+
+        def worker():
+            try:
+                self.after(0, lambda: self._log(f"Iniciando impresión de {total} documento(s) (Dúplex: {'Sí' if doble_cara else 'No'})..."))
+                self.engine.imprimir_lote(
+                    self.ultimos_archivos_generados,
+                    doble_cara=doble_cara,
+                    callback_progreso=lambda i, tot, nom: self.after(0, lambda: self._log(f"🖨️ [{i}/{tot}] Enviado a spooler: {nom}"))
+                )
+                self.after(0, self._on_impresion_completada)
+            except Exception as e:
+                err_msg = str(e)
+                self.after(0, lambda: self._on_impresion_error(err_msg))
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _on_impresion_completada(self):
+        self.btn_imprimir_lote.config(state="normal", text="🖨️ Imprimir Último Lote")
+        self.btn_generar.config(state="normal")
+        total = len(self.ultimos_archivos_generados)
+        self._log(f"✅ Se enviaron {total} hojas al spooler de la impresora.")
+        messagebox.showinfo("Impresión Enviada", f"Se enviaron {total} hojas a la impresora.", parent=self)
+
+    def _on_impresion_error(self, error_str):
+        self.btn_imprimir_lote.config(state="normal", text="🖨️ Imprimir Último Lote")
+        self.btn_generar.config(state="normal")
+        self._log(f"❌ Error de impresión: {error_str}")
+        messagebox.showerror("Error de Impresión", f"No se pudo completar la impresión:\n{error_str}", parent=self)
 
     def _abrir_carpeta_salida(self):
         self._abrir_carpeta(self.engine.salida_dir)
