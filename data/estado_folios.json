@@ -1,7 +1,7 @@
 {
   "PAC_PCC1": {
-    "ultimo_folio": 97,
-    "fecha_actualizacion": "2026-10-03T15:33:57.008488",
+    "ultimo_folio": 825,
+    "fecha_actualizacion": "2026-10-17T12:23:03.768682",
     "historial": [
       {
         "fecha": "2026-10-03T13:16:31.811839",
@@ -86,12 +86,230 @@
         "accion": "Emisión de 4 planilla(s) [00094 al 00097]",
         "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-03_PAC_PCC1",
         "impreso": true
+      },
+      {
+        "fecha": "2026-10-05T15:09:29.033195",
+        "folio_inicial": 394,
+        "folio_final": 394,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T15:18:59.605750",
+        "folio_inicial": 395,
+        "folio_final": 395,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T16:06:32.793035",
+        "folio_inicial": 393,
+        "folio_final": 393,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T16:06:52.645985",
+        "folio_inicial": 394,
+        "folio_final": 396,
+        "cantidad": 3,
+        "accion": "Emisión de 3 planilla(s) [00394 al 00396]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_PAC_PCC1",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-05T16:14:23.204846",
+        "folio_inicial": 393,
+        "folio_final": 393,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T16:16:27.074285",
+        "folio_inicial": 394,
+        "folio_final": 395,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00394 al 00395]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_PAC_PCC1",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-05T16:19:16.526778",
+        "folio_inicial": 396,
+        "folio_final": 397,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00396 al 00397]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_PAC_PCC1",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-05T16:20:12.922390",
+        "folio_inicial": 398,
+        "folio_final": 399,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00398 al 00399]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_PAC_PCC1",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-05T16:24:34.579990",
+        "folio_inicial": 400,
+        "folio_final": 401,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00400 al 00401]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_PAC_PCC1",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-05T16:35:00.094645",
+        "folio_inicial": 396,
+        "folio_final": 396,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T16:38:47.552933",
+        "folio_inicial": 393339396,
+        "folio_final": 393339396,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T16:39:00.226849",
+        "folio_inicial": 393339396,
+        "folio_final": 393339396,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T11:30:53.027182",
+        "folio_inicial": 399,
+        "folio_final": 399,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T11:33:10.932832",
+        "folio_inicial": 399,
+        "folio_final": 399,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T11:33:19.644987",
+        "folio_inicial": 399,
+        "folio_final": 399,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T11:33:28.010802",
+        "folio_inicial": 400,
+        "folio_final": 400,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00400 al 00400]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_PAC_PCC1",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-08T11:35:13.719749",
+        "folio_inicial": 401,
+        "folio_final": 401,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00401 al 00401]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_PAC_PCC1",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-08T11:35:38.616817",
+        "folio_inicial": 399,
+        "folio_final": 399,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T11:36:02.998658",
+        "folio_inicial": 400,
+        "folio_final": 400,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00400 al 00400]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_PAC_PCC1",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-08T11:37:10.648088",
+        "folio_inicial": 399,
+        "folio_final": 399,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T11:38:03.916776",
+        "folio_inicial": 399,
+        "folio_final": 399,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T11:38:27.946955",
+        "folio_inicial": 400,
+        "folio_final": 400,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00400 al 00400]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_PAC_PCC1",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-08T13:47:56.160262",
+        "folio_inicial": 393,
+        "folio_final": 393,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T13:49:14.093315",
+        "folio_inicial": 394,
+        "folio_final": 400,
+        "cantidad": 7,
+        "accion": "Emisión de 7 planilla(s) [00394 al 00400]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_PAC_PCC1",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-08T14:03:23.684786",
+        "folio_inicial": 410,
+        "folio_final": 410,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T14:04:21.047383",
+        "folio_inicial": 411,
+        "folio_final": 420,
+        "cantidad": 10,
+        "accion": "Emisión de 10 planilla(s) [00411 al 00420]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_PAC_PCC1",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-17T12:22:59.121223",
+        "folio_inicial": 420,
+        "folio_final": 420,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-17T12:23:03.768682",
+        "folio_inicial": 825,
+        "folio_final": 825,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
       }
     ]
   },
   "PAC_PC3": {
-    "ultimo_folio": 0,
-    "fecha_actualizacion": "2026-10-03T14:45:58.525672",
+    "ultimo_folio": 26,
+    "fecha_actualizacion": "2026-10-08T15:42:16.878294",
     "historial": [
       {
         "fecha": "2026-10-03T13:16:31.811851",
@@ -151,12 +369,21 @@
         "folio_final": 0,
         "cantidad": 0,
         "accion": "Reinicio post verificacion"
+      },
+      {
+        "fecha": "2026-10-08T15:42:16.878313",
+        "folio_inicial": 1,
+        "folio_final": 26,
+        "cantidad": 26,
+        "accion": "Emisión de 26 planilla(s) [00001 al 00026]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_PAC_PC3",
+        "impreso": true
       }
     ]
   },
   "PAC_PC4": {
-    "ultimo_folio": 38,
-    "fecha_actualizacion": "2026-10-03T13:16:31.811856",
+    "ultimo_folio": 396,
+    "fecha_actualizacion": "2026-10-17T12:23:54.034761",
     "historial": [
       {
         "fecha": "2026-10-03T13:16:31.811858",
@@ -164,12 +391,99 @@
         "folio_final": 38,
         "cantidad": 0,
         "accion": "Inicialización base"
+      },
+      {
+        "fecha": "2026-10-05T16:38:47.552933",
+        "folio_inicial": 38393,
+        "folio_final": 38393,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T16:39:00.226849",
+        "folio_inicial": 38393,
+        "folio_final": 38393,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T14:29:52.074745",
+        "folio_inicial": 393,
+        "folio_final": 393,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T14:30:09.563584",
+        "folio_inicial": 394,
+        "folio_final": 394,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00394 al 00394]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_PAC_PC4",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-08T14:31:56.936587",
+        "folio_inicial": 395,
+        "folio_final": 420,
+        "cantidad": 26,
+        "accion": "Emisión de 26 planilla(s) [00395 al 00420]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_PAC_PC4",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-08T16:13:57.487436",
+        "folio_inicial": 4,
+        "folio_final": 4,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T16:16:08.480195",
+        "folio_inicial": 5,
+        "folio_final": 5,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00005 al 00005]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_PAC_PC4",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-16T19:11:28.600437",
+        "folio_inicial": 396,
+        "folio_final": 396,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-16T19:11:50.931751",
+        "folio_inicial": 397,
+        "folio_final": 399,
+        "cantidad": 3,
+        "accion": "Emisión de 3 planilla(s) [00397 al 00399]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-16_PAC_PC4",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-17T12:23:41.553455",
+        "folio_inicial": 395,
+        "folio_final": 395,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-17T12:23:54.034779",
+        "folio_inicial": 396,
+        "folio_final": 396,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00396 al 00396]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-17_PAC_PC4",
+        "impreso": true
       }
     ]
   },
   "PAC_PC5": {
-    "ultimo_folio": 0,
-    "fecha_actualizacion": "2026-10-03T13:16:31.811861",
+    "ultimo_folio": 826,
+    "fecha_actualizacion": "2026-10-17T12:23:26.614328",
     "historial": [
       {
         "fecha": "2026-10-03T13:16:31.811863",
@@ -177,12 +491,90 @@
         "folio_final": 0,
         "cantidad": 0,
         "accion": "Inicialización base"
+      },
+      {
+        "fecha": "2026-10-05T16:38:47.552933",
+        "folio_inicial": 823,
+        "folio_final": 823,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T16:39:00.226849",
+        "folio_inicial": 393823,
+        "folio_final": 393823,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T14:51:53.090792",
+        "folio_inicial": 393,
+        "folio_final": 393,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T14:52:03.665243",
+        "folio_inicial": 393,
+        "folio_final": 393,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T14:52:17.583072",
+        "folio_inicial": 394,
+        "folio_final": 394,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00394 al 00394]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_PAC_PC5",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-08T14:54:16.413635",
+        "folio_inicial": 395,
+        "folio_final": 420,
+        "cantidad": 26,
+        "accion": "Emisión de 26 planilla(s) [00395 al 00420]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_PAC_PC5",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-16T19:12:02.704789",
+        "folio_inicial": 826,
+        "folio_final": 826,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-16T19:12:20.107446",
+        "folio_inicial": 827,
+        "folio_final": 828,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00827 al 00828]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-16_PAC_PC5",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-17T12:23:14.057225",
+        "folio_inicial": 825,
+        "folio_final": 825,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-17T12:23:26.614342",
+        "folio_inicial": 826,
+        "folio_final": 826,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00826 al 00826]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-17_PAC_PC5",
+        "impreso": true
       }
     ]
   },
   "PAC_PC6": {
-    "ultimo_folio": 0,
-    "fecha_actualizacion": "2026-10-03T13:16:31.811867",
+    "ultimo_folio": 419,
+    "fecha_actualizacion": "2026-10-08T15:13:55.423881",
     "historial": [
       {
         "fecha": "2026-10-03T13:16:31.811869",
@@ -190,12 +582,35 @@
         "folio_final": 0,
         "cantidad": 0,
         "accion": "Inicialización base"
+      },
+      {
+        "fecha": "2026-10-05T16:38:47.552933",
+        "folio_inicial": 0,
+        "folio_final": 0,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T15:12:23.564341",
+        "folio_inicial": 393,
+        "folio_final": 393,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T15:13:55.423893",
+        "folio_inicial": 394,
+        "folio_final": 419,
+        "cantidad": 26,
+        "accion": "Emisión de 26 planilla(s) [00394 al 00419]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_PAC_PC6",
+        "impreso": true
       }
     ]
   },
   "PAC_PC7": {
-    "ultimo_folio": 130,
-    "fecha_actualizacion": "2026-10-03T13:16:31.811871",
+    "ultimo_folio": 126,
+    "fecha_actualizacion": "2026-10-23T11:00:54.606468",
     "historial": [
       {
         "fecha": "2026-10-03T13:16:31.811873",
@@ -203,6 +618,95 @@
         "folio_final": 130,
         "cantidad": 0,
         "accion": "Inicialización base"
+      },
+      {
+        "fecha": "2026-10-08T15:48:27.759890",
+        "folio_inicial": 128,
+        "folio_final": 128,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T15:48:39.169972",
+        "folio_inicial": 129,
+        "folio_final": 129,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00129 al 00129]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_PAC_PC7",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-08T15:50:19.031741",
+        "folio_inicial": 130,
+        "folio_final": 139,
+        "cantidad": 10,
+        "accion": "Emisión de 10 planilla(s) [00130 al 00139]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_PAC_PC7",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-08T15:59:49.985868",
+        "folio_inicial": 127,
+        "folio_final": 127,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T16:00:17.106347",
+        "folio_inicial": 128,
+        "folio_final": 137,
+        "cantidad": 10,
+        "accion": "Emisión de 10 planilla(s) [00128 al 00137]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_PAC_PC7",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-23T09:55:52.707228",
+        "folio_inicial": 125,
+        "folio_final": 125,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-23T09:56:12.433411",
+        "folio_inicial": 126,
+        "folio_final": 126,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00126 al 00126]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-23_PAC_PC7",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-23T10:02:48.557889",
+        "folio_inicial": 133,
+        "folio_final": 133,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-23T10:03:41.055198",
+        "folio_inicial": 134,
+        "folio_final": 154,
+        "cantidad": 21,
+        "accion": "Emisión de 21 planilla(s) [00134 al 00154]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-23_PAC_PC7",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-23T11:00:36.598845",
+        "folio_inicial": 124,
+        "folio_final": 124,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-23T11:00:54.606494",
+        "folio_inicial": 125,
+        "folio_final": 126,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00125 al 00126]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-23_PAC_PC7",
+        "impreso": true
       }
     ]
   },
@@ -220,8 +724,8 @@
     ]
   },
   "POS_R1": {
-    "ultimo_folio": 394,
-    "fecha_actualizacion": "2026-10-05T14:45:14.184734",
+    "ultimo_folio": 404,
+    "fecha_actualizacion": "2026-10-23T09:23:45.957709",
     "historial": [
       {
         "fecha": "2026-10-03T13:16:31.811884",
@@ -250,12 +754,162 @@
         "folio_final": 394,
         "cantidad": 0,
         "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T15:06:25.699711",
+        "folio_inicial": 395,
+        "folio_final": 396,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00395 al 00396]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R1",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-05T15:07:15.793703",
+        "folio_inicial": 397,
+        "folio_final": 398,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00397 al 00398]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R1",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-05T15:09:55.905481",
+        "folio_inicial": 394,
+        "folio_final": 394,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T15:10:26.799715",
+        "folio_inicial": 395,
+        "folio_final": 396,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00395 al 00396]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R1",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-05T15:19:19.223899",
+        "folio_inicial": 397,
+        "folio_final": 397,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00397 al 00397]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R1",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-05T15:19:45.889980",
+        "folio_inicial": 395,
+        "folio_final": 395,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T15:20:13.424770",
+        "folio_inicial": 396,
+        "folio_final": 396,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00396 al 00396]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R1",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-05T15:20:47.464201",
+        "folio_inicial": 395,
+        "folio_final": 395,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T15:20:54.497914",
+        "folio_inicial": 396,
+        "folio_final": 402,
+        "cantidad": 7,
+        "accion": "Emisión de 7 planilla(s) [00396 al 00402]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R1",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-05T16:14:23.204846",
+        "folio_inicial": 393,
+        "folio_final": 393,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T16:25:44.342397",
+        "folio_inicial": 394,
+        "folio_final": 395,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00394 al 00395]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R1",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-08T11:33:28.057650",
+        "folio_inicial": 396,
+        "folio_final": 396,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00396 al 00396]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_POS_R1",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-08T11:35:13.747954",
+        "folio_inicial": 397,
+        "folio_final": 397,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00397 al 00397]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_POS_R1",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-08T11:38:41.523102",
+        "folio_inicial": 398,
+        "folio_final": 398,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00398 al 00398]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_POS_R1",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-08T11:41:08.786829",
+        "folio_inicial": 399,
+        "folio_final": 399,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T11:41:36.018610",
+        "folio_inicial": 400,
+        "folio_final": 400,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00400 al 00400]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_POS_R1",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-23T09:23:32.873454",
+        "folio_inicial": 403,
+        "folio_final": 403,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-23T09:23:45.957745",
+        "folio_inicial": 404,
+        "folio_final": 404,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00404 al 00404]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-23_POS_R1",
+        "impreso": false
       }
     ]
   },
   "POS_R2": {
-    "ultimo_folio": 394,
-    "fecha_actualizacion": "2026-10-05T14:45:22.147392",
+    "ultimo_folio": 404,
+    "fecha_actualizacion": "2026-10-23T09:23:45.999073",
     "historial": [
       {
         "fecha": "2026-10-03T13:16:31.811893",
@@ -277,12 +931,183 @@
         "folio_final": 394,
         "cantidad": 0,
         "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T15:06:25.716061",
+        "folio_inicial": 395,
+        "folio_final": 396,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00395 al 00396]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R2",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-05T15:07:15.808115",
+        "folio_inicial": 397,
+        "folio_final": 398,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00397 al 00398]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R2",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-05T15:10:04.241532",
+        "folio_inicial": 394,
+        "folio_final": 394,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T15:10:26.813007",
+        "folio_inicial": 395,
+        "folio_final": 396,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00395 al 00396]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R2",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-05T15:19:19.232157",
+        "folio_inicial": 397,
+        "folio_final": 397,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00397 al 00397]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R2",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-05T15:19:59.585760",
+        "folio_inicial": 395,
+        "folio_final": 395,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T15:20:13.433222",
+        "folio_inicial": 396,
+        "folio_final": 396,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00396 al 00396]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R2",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-05T16:14:23.204846",
+        "folio_inicial": 393,
+        "folio_final": 393,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T16:25:54.931922",
+        "folio_inicial": 394,
+        "folio_final": 395,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00394 al 00395]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R2",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-08T11:36:14.132489",
+        "folio_inicial": 396,
+        "folio_final": 396,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00396 al 00396]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_POS_R2",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-08T12:50:51.635485",
+        "folio_inicial": 3993,
+        "folio_final": 3993,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T12:50:59.755171",
+        "folio_inicial": 399,
+        "folio_final": 399,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T12:51:12.273698",
+        "folio_inicial": 400,
+        "folio_final": 400,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00400 al 00400]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_POS_R2",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-08T12:53:43.660320",
+        "folio_inicial": 401,
+        "folio_final": 410,
+        "cantidad": 10,
+        "accion": "Emisión de 10 planilla(s) [00401 al 00410]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_POS_R2",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-08T12:59:45.625547",
+        "folio_inicial": 399,
+        "folio_final": 399,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T13:00:06.826459",
+        "folio_inicial": 399,
+        "folio_final": 399,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T13:00:40.887192",
+        "folio_inicial": 400,
+        "folio_final": 410,
+        "cantidad": 11,
+        "accion": "Emisión de 11 planilla(s) [00400 al 00410]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_POS_R2",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-08T13:03:58.609956",
+        "folio_inicial": 399,
+        "folio_final": 399,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T13:04:27.196674",
+        "folio_inicial": 400,
+        "folio_final": 410,
+        "cantidad": 11,
+        "accion": "Emisión de 11 planilla(s) [00400 al 00410]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_POS_R2",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-23T09:23:32.873454",
+        "folio_inicial": 403,
+        "folio_final": 403,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-23T09:23:45.999088",
+        "folio_inicial": 404,
+        "folio_final": 404,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00404 al 00404]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-23_POS_R2",
+        "impreso": false
       }
     ]
   },
   "POS_R3": {
-    "ultimo_folio": 394,
-    "fecha_actualizacion": "2026-10-05T14:45:29.322952",
+    "ultimo_folio": 404,
+    "fecha_actualizacion": "2026-10-23T09:23:46.036096",
     "historial": [
       {
         "fecha": "2026-10-03T13:16:31.811901",
@@ -297,6 +1122,136 @@
         "folio_final": 394,
         "cantidad": 0,
         "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T15:06:25.729994",
+        "folio_inicial": 395,
+        "folio_final": 396,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00395 al 00396]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R3",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-05T15:07:15.820750",
+        "folio_inicial": 397,
+        "folio_final": 398,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00397 al 00398]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R3",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-05T15:10:14.424586",
+        "folio_inicial": 394,
+        "folio_final": 394,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T15:10:26.824120",
+        "folio_inicial": 395,
+        "folio_final": 396,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00395 al 00396]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R3",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-05T15:19:19.238835",
+        "folio_inicial": 397,
+        "folio_final": 397,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00397 al 00397]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R3",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-05T15:20:08.256224",
+        "folio_inicial": 395,
+        "folio_final": 395,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T15:20:13.439325",
+        "folio_inicial": 396,
+        "folio_final": 396,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00396 al 00396]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R3",
+        "impreso": false
+      },
+      {
+        "fecha": "2026-10-05T16:14:23.204846",
+        "folio_inicial": 393,
+        "folio_final": 393,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-05T16:26:03.676838",
+        "folio_inicial": 394,
+        "folio_final": 395,
+        "cantidad": 2,
+        "accion": "Emisión de 2 planilla(s) [00394 al 00395]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-05_POS_R3",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-08T12:56:09.473122",
+        "folio_inicial": 399,
+        "folio_final": 399,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T12:59:45.625547",
+        "folio_inicial": 399,
+        "folio_final": 399,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T13:14:24.310597",
+        "folio_inicial": 399,
+        "folio_final": 399,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-08T13:14:36.707932",
+        "folio_inicial": 400,
+        "folio_final": 400,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00400 al 00400]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_POS_R3",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-08T13:17:19.089466",
+        "folio_inicial": 401,
+        "folio_final": 410,
+        "cantidad": 10,
+        "accion": "Emisión de 10 planilla(s) [00401 al 00410]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_POS_R3",
+        "impreso": true
+      },
+      {
+        "fecha": "2026-10-23T09:23:32.873454",
+        "folio_inicial": 403,
+        "folio_final": 403,
+        "cantidad": 0,
+        "accion": "Sincronización manual con planillero físico"
+      },
+      {
+        "fecha": "2026-10-23T09:23:46.036110",
+        "folio_inicial": 404,
+        "folio_final": 404,
+        "cantidad": 1,
+        "accion": "Emisión de 1 planilla(s) [00404 al 00404]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-23_POS_R3",
+        "impreso": false
       }
     ]
   },
@@ -314,8 +1269,8 @@
     ]
   },
   "PAC_PC2": {
-    "ultimo_folio": 0,
-    "fecha_actualizacion": "2026-10-03T14:45:45.881698",
+    "ultimo_folio": 26,
+    "fecha_actualizacion": "2026-10-08T15:40:56.377241",
     "historial": [
       {
         "fecha": "2026-10-03T14:45:45.881724",
@@ -323,6 +1278,15 @@
         "folio_final": 0,
         "cantidad": 0,
         "accion": "Inicialización base"
+      },
+      {
+        "fecha": "2026-10-08T15:40:56.377260",
+        "folio_inicial": 1,
+        "folio_final": 26,
+        "cantidad": 26,
+        "accion": "Emisión de 26 planilla(s) [00001 al 00026]",
+        "carpeta": "C:\\Users\\the_8\\Desktop\\PERFIL JOSE COLIVORO URIBE -COLDEV, DESARROLLADOR\\02-products\\foliador-automatico-pac-pos\\salida\\2026-10-08_PAC_PC2",
+        "impreso": true
       }
     ]
   }

@@ -131,6 +131,23 @@ class FolioEngine:
         })
         self._guardar_estado()
 
+    def set_ultimos_folios(self, mapa_folios, nota="Sincronización manual masiva"):
+        """Actualiza el último folio de múltiples planillas en una sola operación atómica."""
+        ahora = datetime.datetime.now().isoformat()
+        for codigo, nuevo_folio in mapa_folios.items():
+            if codigo not in self.estado:
+                self.estado[codigo] = {"ultimo_folio": 0, "historial": []}
+            self.estado[codigo]["ultimo_folio"] = int(nuevo_folio)
+            self.estado[codigo]["fecha_actualizacion"] = ahora
+            self.estado[codigo]["historial"].append({
+                "fecha": ahora,
+                "folio_inicial": int(nuevo_folio),
+                "folio_final": int(nuevo_folio),
+                "cantidad": 0,
+                "accion": nota
+            })
+        self._guardar_estado()
+
     def get_preferencias_usuario(self):
         """Retorna las preferencias guardadas del usuario."""
         ruta = os.path.join(self.data_dir, "preferencias_usuario.json")
@@ -259,6 +276,12 @@ class FolioEngine:
             if doble_cara:
                 self.set_impresora_duplex(True, nombre_impresora=pname)
 
+            # Asegurar impresora a nivel de Windows para garantizar que Word COM la tome sin conflictos de puertos
+            try:
+                self.set_impresora_predeterminada_sistema(pname)
+            except Exception:
+                pass
+
             word = None
             try:
                 word = win32com.client.DispatchEx("Word.Application")
@@ -272,7 +295,7 @@ class FolioEngine:
                 except Exception:
                     # Intento con sufijo de puerto si Word COM lo requiere según idioma de Office
                     asignado = False
-                    for i in range(15):
+                    for i in range(20):
                         for prep in ["en Ne", "on Ne"]:
                             try:
                                 word.ActivePrinter = f"{pname} {prep}{i:02d}:"
@@ -290,7 +313,10 @@ class FolioEngine:
                     try:
                         doc.PrintOut(Background=False)
                     finally:
-                        doc.Close(False)
+                        try:
+                            doc.Close(False)
+                        except Exception:
+                            pass
 
                     if callback_progreso:
                         try:
@@ -298,7 +324,16 @@ class FolioEngine:
                         except Exception:
                             pass
 
-                    time.sleep(0.5)
+                    time.sleep(0.4)
+
+                # Esperar a que el spooler de Word entregue todos los documentos al sistema antes de salir
+                try:
+                    tiempo_espera = 0
+                    while getattr(word, "BackgroundPrintingStatus", 0) > 0 and tiempo_espera < 15:
+                        time.sleep(0.3)
+                        tiempo_espera += 0.3
+                except Exception:
+                    pass
 
                 return True
             except Exception as e:
@@ -376,7 +411,130 @@ class FolioEngine:
             )
             return tbl_regex.sub(single_rect_tbl, xml_str, count=1)
 
-        # Caso 5: Resto de plantillas (PC4, PC5, PC6, Dias, POS 1..4)
+        # Caso 5: POS_R1 -> Tabla flotante de 2 celdas oficial (N° FOLIO en gris a la izq, folio correlativo limpio en blanco a la derecha, sin 340 ni desborde sobre FECHA)
+        if codigo == "POS_R1":
+            tbl_regex = re.compile(r'<w:tbl>(?:(?!</w:tbl>).)*?tblpX="8263".*?</w:tbl>', re.DOTALL)
+            two_cell_tbl = (
+                '<w:tbl><w:tblPr><w:tblStyle w:val="Tablaconcuadrcula"/>'
+                '<w:tblpPr w:leftFromText="141" w:rightFromText="141" w:vertAnchor="text" w:horzAnchor="page" w:tblpX="8263" w:tblpY="-150"/>'
+                '<w:tblOverlap w:val="never"/><w:tblW w:w="0" w:type="auto"/>'
+                '<w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1"/></w:tblPr>'
+                '<w:tblGrid><w:gridCol w:w="1117"/><w:gridCol w:w="2139"/></w:tblGrid>'
+                '<w:tr w:rsidR="001136DA" w14:paraId="1DEEED86" w14:textId="77777777" w:rsidTr="000758C0">'
+                '<w:trPr><w:trHeight w:val="365"/></w:trPr>'
+                '<w:tc><w:tcPr><w:tcW w:w="1117" w:type="dxa"/><w:shd w:val="clear" w:color="auto" w:fill="E8E8E8" w:themeFill="background2"/></w:tcPr>'
+                '<w:p w14:paraId="322661FE" w14:textId="77777777" w:rsidR="001136DA" w:rsidRDefault="001136DA" w:rsidP="001136DA">'
+                '<w:pPr><w:jc w:val="center"/><w:rPr><w:b/><w:bCs/><w:sz w:val="20"/><w:szCs w:val="20"/><w:lang w:val="es-ES"/></w:rPr></w:pPr>'
+                '<w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="20"/><w:szCs w:val="20"/><w:lang w:val="es-ES"/></w:rPr><w:t>N° FOLIO</w:t></w:r>'
+                '</w:p></w:tc>'
+                '<w:tc><w:tcPr><w:tcW w:w="2139" w:type="dxa"/></w:tcPr>'
+                '<w:p w14:paraId="058A1908" w14:textId="17D6E109" w:rsidR="001136DA" w:rsidRDefault="00787097" w:rsidP="001136DA">'
+                '<w:pPr><w:jc w:val="center"/><w:rPr><w:b/><w:bCs/><w:sz w:val="22"/><w:szCs w:val="22"/><w:lang w:val="es-ES"/></w:rPr></w:pPr>'
+                f'<w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="22"/><w:szCs w:val="22"/><w:lang w:val="es-ES"/></w:rPr><w:t>{folio_str}</w:t></w:r>'
+                '</w:p></w:tc></w:tr></w:tbl>'
+            )
+            return tbl_regex.sub(two_cell_tbl, xml_str, count=1)
+
+        # Caso 6: POS_R3 -> Tabla flotante de 2 celdas oficial (N° FOLIO en gris a la izq, folio correlativo limpio en blanco a la derecha, sin 340 residual)
+        if codigo == "POS_R3":
+            tbl_regex = re.compile(r'<w:tbl>(?:(?!</w:tbl>).)*?w:tblpY="7".*?</w:tbl>', re.DOTALL)
+            two_cell_tbl = (
+                '<w:tbl><w:tblPr><w:tblStyle w:val="Tablaconcuadrcula"/>'
+                '<w:tblpPr w:leftFromText="141" w:rightFromText="141" w:vertAnchor="text" w:horzAnchor="margin" w:tblpXSpec="right" w:tblpY="7"/>'
+                '<w:tblOverlap w:val="never"/><w:tblW w:w="0" w:type="auto"/>'
+                '<w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1"/></w:tblPr>'
+                '<w:tblGrid><w:gridCol w:w="1165"/><w:gridCol w:w="1714"/></w:tblGrid>'
+                '<w:tr w:rsidR="008F2E9E" w14:paraId="0E4FF744" w14:textId="77777777" w:rsidTr="00437BEB">'
+                '<w:trPr><w:trHeight w:val="440"/></w:trPr>'
+                '<w:tc><w:tcPr><w:tcW w:w="1165" w:type="dxa"/><w:shd w:val="clear" w:color="auto" w:fill="E8E8E8" w:themeFill="background2"/></w:tcPr>'
+                '<w:p w14:paraId="16F685F4" w14:textId="77777777" w:rsidR="008F2E9E" w:rsidRDefault="008F2E9E" w:rsidP="008F2E9E">'
+                '<w:pPr><w:jc w:val="center"/><w:rPr><w:b/><w:bCs/><w:sz w:val="20"/><w:szCs w:val="20"/><w:lang w:val="es-ES"/></w:rPr></w:pPr>'
+                '<w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="20"/><w:szCs w:val="20"/><w:lang w:val="es-ES"/></w:rPr><w:t>N° FOLIO</w:t></w:r>'
+                '</w:p></w:tc>'
+                '<w:tc><w:tcPr><w:tcW w:w="1714" w:type="dxa"/></w:tcPr>'
+                '<w:p w14:paraId="0A7D91D3" w14:textId="45A8E86E" w:rsidR="008F2E9E" w:rsidRDefault="00805B67" w:rsidP="008F2E9E">'
+                '<w:pPr><w:jc w:val="center"/><w:rPr><w:b/><w:bCs/><w:sz w:val="22"/><w:szCs w:val="22"/><w:lang w:val="es-ES"/></w:rPr></w:pPr>'
+                f'<w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="22"/><w:szCs w:val="22"/><w:lang w:val="es-ES"/></w:rPr><w:t>{folio_str}</w:t></w:r>'
+                '</w:p></w:tc></w:tr></w:tbl>'
+            )
+            return tbl_regex.sub(two_cell_tbl, xml_str, count=1)
+
+        # Caso 7: POS_R4 -> Tabla flotante de 2 celdas oficial (N° FOLIO en gris a la izq, folio correlativo limpio en blanco a la derecha, sin desbordes)
+        if codigo == "POS_R4":
+            tbl_regex = re.compile(r'<w:tbl>(?:(?!</w:tbl>).)*?w:tblpY="172".*?</w:tbl>', re.DOTALL)
+            two_cell_tbl = (
+                '<w:tbl><w:tblPr><w:tblStyle w:val="Tablaconcuadrcula"/>'
+                '<w:tblpPr w:leftFromText="141" w:rightFromText="141" w:vertAnchor="text" w:horzAnchor="margin" w:tblpXSpec="right" w:tblpY="172"/>'
+                '<w:tblOverlap w:val="never"/><w:tblW w:w="0" w:type="auto"/>'
+                '<w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1"/></w:tblPr>'
+                '<w:tblGrid><w:gridCol w:w="1117"/><w:gridCol w:w="1643"/></w:tblGrid>'
+                '<w:tr w:rsidR="006C4E56" w14:paraId="4228FD9F" w14:textId="77777777" w:rsidTr="00645E02">'
+                '<w:trPr><w:trHeight w:val="365"/></w:trPr>'
+                '<w:tc><w:tcPr><w:tcW w:w="1117" w:type="dxa"/><w:shd w:val="clear" w:color="auto" w:fill="E8E8E8" w:themeFill="background2"/></w:tcPr>'
+                '<w:p w14:paraId="17065DD4" w14:textId="77777777" w:rsidR="006C4E56" w:rsidRDefault="006C4E56" w:rsidP="00645E02">'
+                '<w:pPr><w:jc w:val="center"/><w:rPr><w:b/><w:bCs/><w:sz w:val="20"/><w:szCs w:val="20"/><w:lang w:val="es-ES"/></w:rPr></w:pPr>'
+                '<w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="20"/><w:szCs w:val="20"/><w:lang w:val="es-ES"/></w:rPr><w:t>N° FOLIO</w:t></w:r>'
+                '</w:p></w:tc>'
+                '<w:tc><w:tcPr><w:tcW w:w="1643" w:type="dxa"/></w:tcPr>'
+                '<w:p w14:paraId="6A4A5EF0" w14:textId="77777777" w:rsidR="006C4E56" w:rsidRDefault="006C4E56" w:rsidP="00645E02">'
+                '<w:pPr><w:jc w:val="center"/><w:rPr><w:b/><w:bCs/><w:sz w:val="22"/><w:szCs w:val="22"/><w:lang w:val="es-ES"/></w:rPr></w:pPr>'
+                f'<w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="22"/><w:szCs w:val="22"/><w:lang w:val="es-ES"/></w:rPr><w:t>{folio_str}</w:t></w:r>'
+                '</w:p></w:tc></w:tr></w:tbl>'
+            )
+            return tbl_regex.sub(two_cell_tbl, xml_str, count=1)
+
+        # Caso 8: POS_R2 -> Párrafo exacto con id 4ABEE3F6
+        if codigo == "POS_R2":
+            target = re.compile(r'<w:p [^>]*?paraId="4ABEE3F6"[^>]*?>.*?</w:p>', re.DOTALL)
+            new_p = (
+                '<w:p w14:paraId="4ABEE3F6" w14:textId="0E3D8556" w:rsidR="00AE0822" w:rsidRDefault="00AE0822" w:rsidP="004C1A34">'
+                '<w:pPr><w:jc w:val="center"/><w:rPr><w:b/><w:bCs/><w:sz w:val="22"/><w:szCs w:val="22"/><w:lang w:val="es-ES"/></w:rPr></w:pPr>'
+                f'<w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="22"/><w:szCs w:val="22"/><w:lang w:val="es-ES"/></w:rPr><w:t>FOLIO: {folio_str}</w:t></w:r>'
+                '</w:p>'
+            )
+            return target.sub(new_p, xml_str, count=1)
+
+        # Caso 9: PAC_PC5 -> Párrafo 76FBC3D6 (FOLIO) y 3394D40A (número)
+        if codigo == "PAC_PC5":
+            target_lbl = re.compile(r'<w:p [^>]*?paraId="76FBC3D6"[^>]*?>.*?</w:p>', re.DOTALL)
+            new_lbl = (
+                '<w:p w14:paraId="76FBC3D6" w:rsidR="00B44498" w:rsidRDefault="00B44498" w:rsidP="00463808">'
+                '<w:pPr><w:jc w:val="center"/><w:rPr><w:rFonts w:eastAsia="Calibri" w:cs="Calibri"/><w:b/><w:bCs/><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:pPr>'
+                '<w:r><w:rPr><w:rFonts w:eastAsia="Calibri" w:cs="Calibri"/><w:b/><w:bCs/><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr><w:t>FOLIO</w:t></w:r>'
+                '</w:p>'
+            )
+            xml_str = target_lbl.sub(new_lbl, xml_str, count=1)
+
+            target_num = re.compile(r'<w:p [^>]*?paraId="3394D40A"[^>]*?>.*?</w:p>', re.DOTALL)
+            new_num = (
+                '<w:p w14:paraId="3394D40A" w:rsidR="00B44498" w:rsidRDefault="00EE1DDC" w:rsidP="00463808">'
+                '<w:pPr><w:jc w:val="center"/><w:rPr><w:rFonts w:eastAsia="Calibri" w:cs="Calibri"/><w:b/><w:bCs/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="es-ES"/></w:rPr></w:pPr>'
+                f'<w:r><w:rPr><w:rFonts w:eastAsia="Calibri" w:cs="Calibri"/><w:b/><w:bCs/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="es-ES"/></w:rPr><w:t>{folio_str}</w:t></w:r>'
+                '</w:p>'
+            )
+            return target_num.sub(new_num, xml_str, count=1)
+
+        # Caso 10: PAC_PC6 -> Párrafo 44F446EC (FOLIO) y 6A5193E3 (número)
+        if codigo == "PAC_PC6":
+            target_lbl = re.compile(r'<w:p [^>]*?paraId="44F446EC"[^>]*?>.*?</w:p>', re.DOTALL)
+            new_lbl = (
+                '<w:p w14:paraId="44F446EC" w:rsidR="002A61BE" w:rsidRDefault="002A61BE" w:rsidP="002A61BE">'
+                '<w:pPr><w:jc w:val="center"/><w:rPr><w:b/><w:bCs/><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:pPr>'
+                '<w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr><w:t>FOLIO</w:t></w:r>'
+                '</w:p>'
+            )
+            xml_str = target_lbl.sub(new_lbl, xml_str, count=1)
+
+            target_num = re.compile(r'<w:p [^>]*?paraId="6A5193E3"[^>]*?>.*?</w:p>', re.DOTALL)
+            new_num = (
+                '<w:p w14:paraId="6A5193E3" w:rsidR="00E70877" w:rsidRDefault="007A2A70" w:rsidP="00E70877">'
+                '<w:pPr><w:jc w:val="center"/><w:rPr><w:b/><w:bCs/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="es-ES"/></w:rPr></w:pPr>'
+                f'<w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="es-ES"/></w:rPr><w:t>{folio_str}</w:t></w:r>'
+                '</w:p>'
+            )
+            return target_num.sub(new_num, xml_str, count=1)
+
+        # Caso 11: Resto de plantillas (PAC_PC4, PAC_DIAS, etc.)
         def repl_p(match):
             p_full = match.group(0)
             inner_text = re.sub(r'<[^>]+>', '', p_full).strip()
@@ -447,15 +605,21 @@ class FolioEngine:
             nombre_salida = f"{codigo}_Folio_{folio_str}.docx"
             ruta_salida = os.path.join(dest_dir, nombre_salida)
 
-            with zipfile.ZipFile(plantilla_src, "r") as zin:
-                with zipfile.ZipFile(ruta_salida, "w", compression=zipfile.ZIP_DEFLATED) as zout:
-                    for item in zin.infolist():
-                        data = zin.read(item.filename)
-                        if item.filename == "word/document.xml":
-                            xml_str = data.decode("utf-8")
-                            xml_str = self._inyectar_folio_quirurgico(xml_str, codigo, folio_str)
-                            data = xml_str.encode("utf-8")
-                        zout.writestr(item, data)
+            try:
+                with zipfile.ZipFile(plantilla_src, "r") as zin:
+                    with zipfile.ZipFile(ruta_salida, "w", compression=zipfile.ZIP_DEFLATED) as zout:
+                        for item in zin.infolist():
+                            data = zin.read(item.filename)
+                            if item.filename == "word/document.xml":
+                                xml_str = data.decode("utf-8")
+                                xml_str = self._inyectar_folio_quirurgico(xml_str, codigo, folio_str)
+                                data = xml_str.encode("utf-8")
+                            zout.writestr(item, data)
+            except PermissionError:
+                raise PermissionError(
+                    f"El archivo '{nombre_salida}' está abierto en Microsoft Word.\n\n"
+                    f"Por favor, cierra la ventana de Word de ese documento para permitir sobreescribirlo e intenta nuevamente."
+                )
 
             archivos_generados.append({
                 "folio": folio_str,

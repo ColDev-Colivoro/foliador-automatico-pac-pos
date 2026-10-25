@@ -11,6 +11,7 @@ import os
 import sys
 import subprocess
 import threading
+import datetime
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 
@@ -31,13 +32,18 @@ class FoliadorApp(tk.Tk):
         # Configurar estilos de ttk
         self._configurar_estilos()
 
+        # Preferencias guardadas del usuario
+        prefs = self.engine.get_preferencias_usuario()
+        auto_imp_def = prefs.get("auto_imprimir", True)  # Por defecto activo para imprimir directamente al generar
+        duplex_def = prefs.get("doble_cara", True)
+
         # Variables de estado
         self.var_cantidad = tk.IntVar(value=1)
         self.var_ultimo_folio = tk.StringVar()
         self.var_resumen_rango = tk.StringVar()
         self.var_impresora_seleccionada = tk.StringVar()
-        self.var_auto_imprimir = tk.BooleanVar(value=False)
-        self.var_doble_cara = tk.BooleanVar(value=True)
+        self.var_auto_imprimir = tk.BooleanVar(value=auto_imp_def)
+        self.var_doble_cara = tk.BooleanVar(value=duplex_def)
         self.ultimos_archivos_generados = []
 
         # Mapa de variables de checkbox y widgets
@@ -98,6 +104,31 @@ class FoliadorApp(tk.Tk):
 
         style.configure("TSpinbox", fieldbackground="#ffffff", background="#0284c7", foreground="#0f172a", font=("Segoe UI", 11, "bold"))
         style.configure("TCheckbutton", background="#1e293b", foreground="#f8fafc", font=("Segoe UI", 10))
+
+        # Personalizar cuadros de entrada de texto (Entry) con alto contraste
+        style.configure(
+            "TEntry",
+            fieldbackground="#ffffff",
+            foreground="#0f172a",
+            insertcolor="#0f172a",
+            selectbackground="#0284c7",
+            selectforeground="#ffffff",
+            font=("Segoe UI", 11, "bold")
+        )
+        style.map(
+            "TEntry",
+            fieldbackground=[("focus", "#ffffff"), ("disabled", "#e2e8f0")],
+            foreground=[("focus", "#0f172a"), ("disabled", "#64748b")]
+        )
+
+        self.option_add("*TEntry*foreground", "#0f172a")
+        self.option_add("*TEntry*fieldbackground", "#ffffff")
+        self.option_add("*TEntry*insertColor", "#0f172a")
+        self.option_add("*Entry*foreground", "#0f172a")
+        self.option_add("*Entry*background", "#ffffff")
+        self.option_add("*Entry*insertBackground", "#0f172a")
+        self.option_add("*Entry*selectBackground", "#0284c7")
+        self.option_add("*Entry*selectForeground", "#ffffff")
 
         # Personalizar selector desplegable (Combobox)
         style.configure("TCombobox", fieldbackground="#1e293b", background="#334155", foreground="#ffffff", selectbackground="#0284c7", selectforeground="#ffffff", font=("Segoe UI", 10))
@@ -317,14 +348,16 @@ class FoliadorApp(tk.Tk):
         self.chk_duplex = ttk.Checkbutton(
             f_printer_sub,
             text="📄 Imprimir por ambos lados (Dúplex)",
-            variable=self.var_doble_cara
+            variable=self.var_doble_cara,
+            command=self._on_toggle_preferencias
         )
         self.chk_duplex.pack(side="left", padx=(0, 16))
 
         self.chk_print = ttk.Checkbutton(
             f_printer_sub,
             text="⚡ Mandar a imprimir automáticamente al hacer clic en Generar",
-            variable=self.var_auto_imprimir
+            variable=self.var_auto_imprimir,
+            command=self._on_toggle_preferencias
         )
         self.chk_print.pack(side="left")
 
@@ -413,7 +446,8 @@ class FoliadorApp(tk.Tk):
                 style="Muted.TLabel"
             )
             self.chk_print.config(state="normal")
-            if self.ultimos_archivos_generados:
+            lote_disponible = self._obtener_archivos_ultimo_lote()
+            if lote_disponible:
                 self.btn_imprimir_lote.config(state="normal")
             else:
                 self.btn_imprimir_lote.config(state="disabled")
@@ -427,6 +461,27 @@ class FoliadorApp(tk.Tk):
             self.var_auto_imprimir.set(False)
             self.chk_print.config(state="disabled")
             self.btn_imprimir_lote.config(state="disabled")
+
+    def _on_toggle_preferencias(self):
+        self.engine.guardar_preferencia("auto_imprimir", self.var_auto_imprimir.get())
+        self.engine.guardar_preferencia("doble_cara", self.var_doble_cara.get())
+
+    def _obtener_archivos_ultimo_lote(self):
+        if self.ultimos_archivos_generados:
+            existentes = [f for f in self.ultimos_archivos_generados if os.path.exists(f)]
+            if existentes:
+                return existentes
+        # Buscar en salida/ carpetas de hoy si se inició una nueva sesión
+        archivos = []
+        fecha_hoy = datetime.date.today().strftime("%Y-%m-%d")
+        if os.path.exists(self.engine.salida_dir):
+            for d in sorted(os.listdir(self.engine.salida_dir), reverse=True):
+                sub = os.path.join(self.engine.salida_dir, d)
+                if os.path.isdir(sub) and d.startswith(fecha_hoy):
+                    for f in sorted(os.listdir(sub)):
+                        if f.endswith(".docx") and not f.startswith("~$"):
+                            archivos.append(os.path.join(sub, f))
+        return archivos
 
     def _on_cambio_impresora(self, event=None):
         seleccionada = self.var_impresora_seleccionada.get()
@@ -559,54 +614,244 @@ class FoliadorApp(tk.Tk):
 
     def _sincronizar_folio_fisico(self):
         seleccionadas = [cod for cod, var in self.check_vars.items() if var.get()]
-        if len(seleccionadas) == 1:
-            self._pedir_nuevo_folio(seleccionadas[0])
+        if not seleccionadas:
+            messagebox.showwarning(
+                "Ninguna Planilla Seleccionada",
+                "Por favor marca en la lista las planillas que deseas sincronizar con el físico.",
+                parent=self
+            )
             return
 
-        # Si hay varias o ninguna marcada, desplegar diálogo para elegir cuál sincronizar
-        ventana_sync = tk.Toplevel(self)
-        ventana_sync.title("Sincronizar Folio")
-        ventana_sync.geometry("460x170")
-        ventana_sync.configure(bg="#0f172a")
-        ventana_sync.transient(self)
-        ventana_sync.grab_set()
+        self._mostrar_formulario_sincronizacion(seleccionadas)
 
-        ttk.Label(ventana_sync, text="Elige la planilla que deseas sincronizar:", style="Card.TLabel", font=("Segoe UI", 10, "bold")).pack(pady=(16, 6), padx=16, anchor="w")
+    def _mostrar_formulario_sincronizacion(self, codigos_seleccionados):
+        dlg = tk.Toplevel(self)
+        dlg.title("Sincronizar Folio Físico")
+        dlg.configure(bg="#0f172a")
+        dlg.transient(self)
+        dlg.grab_set()
 
-        opciones = [f"{p['codigo']} · {p['nombre']}" for p in self.engine.plantillas]
-        combo = ttk.Combobox(ventana_sync, values=opciones, state="readonly", width=48)
-        combo.pack(pady=4, padx=16, fill="x")
-        combo.current(0)
+        total = len(codigos_seleccionados)
+        ancho = 580
+        alto = min(560, 230 + total * 56)
+        dlg.geometry(f"{ancho}x{alto}")
+        dlg.minsize(520, 230)
 
-        def confirmar():
-            idx = combo.current()
-            if idx >= 0:
-                cod = self.engine.plantillas[idx]["codigo"]
-                ventana_sync.destroy()
-                self._pedir_nuevo_folio(cod)
+        # Centrar con respecto a la ventana principal
+        dlg.update_idletasks()
+        x = self.winfo_x() + (self.winfo_width() // 2) - (ancho // 2)
+        y = self.winfo_y() + (self.winfo_height() // 2) - (alto // 2)
+        dlg.geometry(f"+{max(10, x)}+{max(10, y)}")
 
-        ttk.Button(ventana_sync, text="Continuar", style="Primary.TButton", command=confirmar).pack(pady=12)
+        # 1. Encabezado
+        f_header = ttk.Frame(dlg, padding=(20, 14, 20, 8))
+        f_header.pack(fill="x")
+        ttk.Label(
+            f_header,
+            text=f"✏️ Sincronizar con Planillero Físico ({total} planilla{'s' if total > 1 else ''})",
+            style="Header.TLabel",
+            font=("Segoe UI", 12, "bold")
+        ).pack(anchor="w")
+        ttk.Label(
+            f_header,
+            text="Indica el último número de folio ya usado o impreso físicamente en planta.",
+            style="Muted.TLabel"
+        ).pack(anchor="w", pady=(2, 0))
 
-    def _pedir_nuevo_folio(self, codigo):
-        info = self.engine.get_plantilla_info(codigo)
-        if not info:
-            return
-        actual = self.engine.get_ultimo_folio(codigo)
-        nuevo = simpledialog.askinteger(
-            "Sincronizar con Planillero Físico",
-            f"Planilla: {info['nombre']}\n\n"
-            f"Último folio registrado en el sistema: {actual}\n"
-            f"¿Cuál es el último folio que ya está usado o impreso físicamente?",
-            initialvalue=actual,
-            minvalue=0,
-            maxvalue=999999,
-            parent=self
+        # Mapa de variables de entrada para cada código
+        entries_vars = {}
+
+        # 2. Acceso rápido masivo si hay más de 1 planilla seleccionada
+        if total > 1:
+            card_masivo = ttk.Frame(dlg, style="Card.TFrame", padding=(14, 8))
+            card_masivo.pack(fill="x", padx=16, pady=(0, 8))
+
+            ttk.Label(
+                card_masivo,
+                text=f"⚡ Asignar el mismo folio a las {total} planillas seleccionadas:",
+                font=("Segoe UI", 9, "bold"),
+                style="Card.TLabel"
+            ).pack(anchor="w", pady=(0, 6))
+
+            f_masivo_row = ttk.Frame(card_masivo, style="Card.TFrame")
+            f_masivo_row.pack(fill="x")
+
+            primer_ultimo = self.engine.get_ultimo_folio(codigos_seleccionados[0])
+            var_masivo = tk.StringVar(value=str(primer_ultimo))
+
+            entry_masivo = tk.Entry(
+                f_masivo_row,
+                textvariable=var_masivo,
+                font=("Segoe UI", 12, "bold"),
+                width=10,
+                justify="center",
+                bg="#ffffff",
+                fg="#0f172a",
+                insertbackground="#0f172a",
+                selectbackground="#0284c7",
+                selectforeground="#ffffff",
+                relief="flat",
+                bd=2,
+                highlightthickness=2,
+                highlightbackground="#64748b",
+                highlightcolor="#38bdf8"
+            )
+            entry_masivo.pack(side="left", padx=(0, 8))
+
+            def aplicar_a_todas_en_pantalla():
+                val = var_masivo.get().strip()
+                if val.isdigit():
+                    for v in entries_vars.values():
+                        v.set(val)
+
+            def aplicar_y_guardar_masivo():
+                aplicar_a_todas_en_pantalla()
+                guardar_todos()
+
+            ttk.Button(
+                f_masivo_row,
+                text="⚡ Rellenar Campos",
+                style="ActionText.TButton",
+                command=aplicar_a_todas_en_pantalla
+            ).pack(side="left", padx=(0, 6))
+
+            ttk.Button(
+                f_masivo_row,
+                text="💾 Asignar a Todas y Guardar",
+                style="Small.TButton",
+                command=aplicar_y_guardar_masivo
+            ).pack(side="left")
+
+            entry_masivo.bind("<Return>", lambda e: aplicar_y_guardar_masivo())
+            entry_masivo.focus_set()
+            entry_masivo.select_range(0, tk.END)
+
+        # 3. Lista de planillas seleccionadas
+        card_lista = ttk.Frame(dlg, style="Card.TFrame", padding=(14, 8))
+        card_lista.pack(fill="both", expand=True, padx=16, pady=(0, 8))
+
+        canvas = tk.Canvas(card_lista, bg="#1e293b", highlightthickness=0)
+        scrollbar = ttk.Scrollbar(card_lista, orient="vertical", command=canvas.yview)
+        scrollable_frame = ttk.Frame(canvas, style="Card.TFrame")
+
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
         )
-        if nuevo is not None:
-            self.engine.set_ultimo_folio(codigo, nuevo, "Sincronización manual con planillero físico")
-            self._log(f"Folio de {codigo} sincronizado a {nuevo}. El próximo correlativo será {nuevo + 1}.")
+
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(xscrollcommand=None, yscrollcommand=scrollbar.set)
+
+        if total > 4:
+            canvas.pack(side="left", fill="both", expand=True)
+            scrollbar.pack(side="right", fill="y")
+        else:
+            canvas.pack(side="top", fill="both", expand=True)
+
+        primer_entry_individual = None
+
+        for idx, cod in enumerate(codigos_seleccionados):
+            info = self.engine.get_plantilla_info(cod)
+            nom = info["nombre"] if info else cod
+            ultimo = self.engine.get_ultimo_folio(cod)
+            dig = info.get("digitos", 5) if info else 5
+
+            row_f = ttk.Frame(scrollable_frame, style="Card.TFrame", padding=(4, 3))
+            row_f.pack(fill="x", pady=2)
+
+            f_txt = ttk.Frame(row_f, style="Card.TFrame")
+            f_txt.pack(side="left", fill="x", expand=True)
+            ttk.Label(
+                f_txt,
+                text=f"{cod} · {nom}",
+                font=("Segoe UI", 9, "bold"),
+                style="Card.TLabel"
+            ).pack(anchor="w")
+            ttk.Label(
+                f_txt,
+                text=f"Último en sistema: {ultimo:0{dig}d}  (Próximo correlativo: {ultimo + 1:0{dig}d})",
+                font=("Segoe UI", 8),
+                style="Muted.TLabel"
+            ).pack(anchor="w")
+
+            var_val = tk.StringVar(value=str(ultimo))
+            entries_vars[cod] = var_val
+
+            ttk.Label(
+                row_f,
+                text="Nuevo último:",
+                font=("Segoe UI", 8),
+                style="Muted.TLabel"
+            ).pack(side="left", padx=(10, 4))
+
+            ent = tk.Entry(
+                row_f,
+                textvariable=var_val,
+                font=("Segoe UI", 11, "bold"),
+                width=9,
+                justify="center",
+                bg="#ffffff",
+                fg="#0f172a",
+                insertbackground="#0f172a",
+                selectbackground="#0284c7",
+                selectforeground="#ffffff",
+                relief="flat",
+                bd=2,
+                highlightthickness=1,
+                highlightbackground="#64748b",
+                highlightcolor="#38bdf8"
+            )
+            ent.pack(side="left", padx=(0, 4))
+            ent.bind("<Return>", lambda e: guardar_todos())
+
+            if idx == 0 and total == 1:
+                primer_entry_individual = ent
+
+        if total == 1 and primer_entry_individual:
+            primer_entry_individual.focus_set()
+            primer_entry_individual.select_range(0, tk.END)
+
+        def guardar_todos():
+            mapa_nuevos = {}
+            for cod, v in entries_vars.items():
+                val_str = v.get().strip()
+                if not val_str.isdigit():
+                    messagebox.showerror(
+                        "Valor Inválido",
+                        f"El folio para {cod} debe ser un número entero positivo.",
+                        parent=dlg
+                    )
+                    return
+                mapa_nuevos[cod] = int(val_str)
+
+            self.engine.set_ultimos_folios(mapa_nuevos, "Sincronización manual con planillero físico")
+            dlg.destroy()
+
+            detalles = [f"{cod}: {fol}" for cod, fol in mapa_nuevos.items()]
+            self._log(f"✏️ Folios sincronizados: {', '.join(detalles)}.")
+
             self._actualizar_labels_checkboxes()
             self._al_cambiar_seleccion_checkboxes()
+
+        # 4. Barra de botones inferiores
+        f_btns = ttk.Frame(dlg, padding=(16, 4, 16, 12))
+        f_btns.pack(fill="x", side="bottom")
+
+        ttk.Button(
+            f_btns,
+            text="💾 Guardar Cambios",
+            style="Primary.TButton",
+            command=guardar_todos
+        ).pack(side="right", padx=(8, 0))
+
+        ttk.Button(
+            f_btns,
+            text="Cancelar",
+            style="Secondary.TButton",
+            command=dlg.destroy
+        ).pack(side="right")
+
+        dlg.bind("<Escape>", lambda e: dlg.destroy())
 
     def _generar_planillas(self):
         codigos_seleccionados = [cod for cod, var in self.check_vars.items() if var.get()]
@@ -670,10 +915,8 @@ class FoliadorApp(tk.Tk):
 
     def _on_generacion_multiple_completada(self, resultados, todos_archivos, auto_print, errores_impresion):
         self.btn_generar.config(state="normal", text="🚀 GENERAR PLANILLAS FOLIADAS")
-        self._actualizar_estado_impresora()
         self.ultimos_archivos_generados = todos_archivos
-        if self.engine.hay_impresora_disponible() and self.ultimos_archivos_generados:
-            self.btn_imprimir_lote.config(state="normal")
+        self._actualizar_estado_impresora()
 
         # Actualizar etiquetas de folios en los checkboxes
         self._actualizar_labels_checkboxes()
@@ -681,40 +924,55 @@ class FoliadorApp(tk.Tk):
 
         total_hojas = len(todos_archivos)
         num_planillas = len(resultados)
-
-        estado_imp_texto = "Guardado listo en carpeta"
-        if auto_print:
-            if not errores_impresion:
-                estado_imp_texto = "Enviado a impresora con éxito"
-            else:
-                estado_imp_texto = f"⚠️ Guardado en carpeta (Errores de impresión en {len(errores_impresion)} planilla(s))"
-
-        self._log(f"✅ Completada emisión de {num_planillas} planilla(s) · Total: {total_hojas} archivo(s) Word.")
-        imp_nombre = self.var_impresora_seleccionada.get() or self.engine.get_impresora_predeterminada()
-        if auto_print and not errores_impresion:
-            self._log(f"🖨️ {total_hojas} documento(s) enviados al spooler de {imp_nombre}.")
-        elif errores_impresion:
-            for err in errores_impresion:
-                self._log(f"⚠️ {err}")
+        imp_nombre = self.var_impresora_seleccionada.get() or self.engine.get_impresora_predeterminada() or "la impresora"
 
         desglose = "\n".join([
             f"• {r['codigo']}: Folios {r['folio_inicial']} al {r['folio_final']} ({r['cantidad']} hojas)"
             for r in resultados
         ])
 
-        msg_exito = (
-            f"✅ ¡Planillas generadas con éxito!\n\n"
-            f"• Planillas procesadas: {num_planillas}\n"
-            f"• Total emitido: {total_hojas} archivo(s) Word (.docx)\n\n"
-            f"• Detalle de rangos:\n{desglose}\n\n"
-            f"• Logos y formato: 100% Preservados intactos\n"
-            f"• Impresión: {estado_imp_texto}\n\n"
-            f"¿Deseas abrir la carpeta de salida ahora?"
-        )
+        self._log(f"✅ Completada emisión de {num_planillas} planilla(s) · Total: {total_hojas} archivo(s) Word.")
 
-        abrir = messagebox.askyesno("Emisión Completada", msg_exito, parent=self)
-        if abrir and resultados:
-            self._abrir_carpeta(resultados[0]["carpeta_salida"])
+        if auto_print:
+            if not errores_impresion:
+                estado_imp_texto = f"Enviado a impresora '{imp_nombre}' con éxito"
+                self._log(f"🖨️ {total_hojas} documento(s) enviados al spooler de {imp_nombre}.")
+            else:
+                estado_imp_texto = f"⚠️ Guardado en carpeta (Errores de impresión en {len(errores_impresion)} planilla(s))"
+                for err in errores_impresion:
+                    self._log(f"⚠️ {err}")
+
+            msg_exito = (
+                f"✅ ¡Planillas generadas con éxito!\n\n"
+                f"• Planillas procesadas: {num_planillas}\n"
+                f"• Total emitido: {total_hojas} archivo(s) Word (.docx)\n\n"
+                f"• Detalle de rangos:\n{desglose}\n\n"
+                f"• Logos y formato: 100% Preservados intactos\n"
+                f"• Impresión: {estado_imp_texto}\n\n"
+                f"¿Deseas abrir la carpeta de salida ahora?"
+            )
+            abrir = messagebox.askyesno("Emisión Completada", msg_exito, parent=self)
+            if abrir and resultados:
+                self._abrir_carpeta(resultados[0]["carpeta_salida"])
+        else:
+            self._log(f"ℹ️ Modo solo digital (no se envió automáticamente a imprimir).")
+            self._log(f"💡 Para enviar estas {total_hojas} hojas a {imp_nombre}, haz clic en '🖨️ Imprimir Último Lote'.")
+
+            msg_pregunta = (
+                f"✅ ¡Planillas generadas con éxito en disco!\n\n"
+                f"• Planillas procesadas: {num_planillas}\n"
+                f"• Total emitido: {total_hojas} archivo(s) Word (.docx)\n\n"
+                f"• Detalle de rangos:\n{desglose}\n\n"
+                f"La casilla de impresión automática estaba desmarcada.\n"
+                f"¿Deseas enviar estas {total_hojas} hojas a la impresora '{imp_nombre}' ahora?"
+            )
+            desea_imprimir = messagebox.askyesno("Planillas Generadas", msg_pregunta, parent=self)
+            if desea_imprimir:
+                self._imprimir_ultimo_lote()
+            else:
+                abrir = messagebox.askyesno("Abrir Carpeta", "¿Deseas abrir la carpeta de salida ahora?", parent=self)
+                if abrir and resultados:
+                    self._abrir_carpeta(resultados[0]["carpeta_salida"])
 
     def _on_generacion_error(self, error_str):
         self.btn_generar.config(state="normal", text="🚀 GENERAR PLANILLAS FOLIADAS")
@@ -723,14 +981,15 @@ class FoliadorApp(tk.Tk):
         messagebox.showerror("Error al Generar", f"Ocurrió un error inesperado:\n{error_str}", parent=self)
 
     def _imprimir_ultimo_lote(self):
-        if not self.ultimos_archivos_generados:
-            messagebox.showinfo("Imprimir", "Aún no se ha generado ningún lote en esta sesión.", parent=self)
+        archivos_a_imprimir = self._obtener_archivos_ultimo_lote()
+        if not archivos_a_imprimir:
+            messagebox.showinfo("Imprimir", "Aún no se ha generado ningún lote para imprimir en esta sesión.", parent=self)
             return
 
         if not self.engine.hay_impresora_disponible():
             messagebox.showwarning(
                 "Sin Impresora",
-                "No hay ninguna impresora activa o configurada en Windows.\nVerifique la conexión antes de imprimir.",
+                "No hay ninguna impresora activa o configurada en Windows.\nVerifica la conexión antes de imprimir.",
                 parent=self
             )
             return
@@ -738,7 +997,7 @@ class FoliadorApp(tk.Tk):
         impresora_actual = self.var_impresora_seleccionada.get() or self.engine.get_impresora_predeterminada()
         confirm = messagebox.askyesno(
             "Confirmar Impresión",
-            f"Se enviarán {len(self.ultimos_archivos_generados)} archivo(s) Word a la impresora:\n"
+            f"Se enviarán {len(archivos_a_imprimir)} archivo(s) Word a la impresora:\n"
             f"{impresora_actual}\n\n"
             f"¿Deseas continuar?",
             parent=self
@@ -747,7 +1006,7 @@ class FoliadorApp(tk.Tk):
             return
 
         doble_cara = self.var_doble_cara.get()
-        total = len(self.ultimos_archivos_generados)
+        total = len(archivos_a_imprimir)
 
         self.btn_imprimir_lote.config(state="disabled", text="⏳ Imprimiendo...")
         self.btn_generar.config(state="disabled")
@@ -756,23 +1015,21 @@ class FoliadorApp(tk.Tk):
             try:
                 self.after(0, lambda: self._log(f"Iniciando impresión de {total} documento(s) en '{impresora_actual}' (Dúplex: {'Sí' if doble_cara else 'No'})..."))
                 self.engine.imprimir_lote(
-                    self.ultimos_archivos_generados,
+                    archivos_a_imprimir,
                     doble_cara=doble_cara,
                     nombre_impresora=impresora_actual,
                     callback_progreso=lambda i, tot, nom: self.after(0, lambda: self._log(f"🖨️ [{i}/{tot}] Enviado a spooler ({impresora_actual}): {nom}"))
                 )
-                self.after(0, self._on_impresion_completada)
+                self.after(0, lambda: self._on_impresion_completada(total, impresora_actual))
             except Exception as e:
                 err_msg = str(e)
                 self.after(0, lambda: self._on_impresion_error(err_msg))
 
         threading.Thread(target=worker, daemon=True).start()
 
-    def _on_impresion_completada(self):
+    def _on_impresion_completada(self, total=0, imp_act="la impresora"):
         self.btn_imprimir_lote.config(state="normal", text="🖨️ Imprimir Último Lote")
         self.btn_generar.config(state="normal")
-        total = len(self.ultimos_archivos_generados)
-        imp_act = self.var_impresora_seleccionada.get() or "la impresora"
         self._log(f"✅ Se enviaron {total} hojas al spooler de {imp_act}.")
         messagebox.showinfo("Impresión Enviada", f"Se enviaron {total} hojas a {imp_act}.", parent=self)
 
